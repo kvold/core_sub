@@ -1,0 +1,25 @@
+﻿<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:ns="http://www.opengis.net/ows/1.1">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <prod:GetCapabilities>
+      <!--Optional:-->
+      <prod:getcapabilities updateSequence="?" service="WFS">
+        <!--Optional:-->
+        <ns:AcceptVersions>
+          <!--1 or more repetitions:-->
+          <ns:Version>?</ns:Version>
+        </ns:AcceptVersions>
+        <!--Optional:-->
+        <ns:Sections>
+          <!--Zero or more repetitions:-->
+          <ns:Section>?</ns:Section>
+        </ns:Sections>
+        <!--Optional:-->
+        <ns:AcceptFormats>
+          <!--Zero or more repetitions:-->
+          <ns:OutputFormat>?</ns:OutputFormat>
+        </ns:AcceptFormats>
+      </prod:getcapabilities>
+    </prod:GetCapabilities>
+  </soapenv:Body>
+</soapenv:Envelope>
