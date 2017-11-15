@@ -11,33 +11,42 @@ namespace CORESubscriber
 {
     internal class Program
     {
+        public static string ConfigFileProvider = "Config\\Providers.xml";
+        private static string _apiUrl;
+        private const string XmlMediaType = "text/xml";
+        private static readonly List<string> DatasetFields = new List<string> { "datasetId", "name", "applicationSchema", "version" };
         private static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
         private static void Main(string[] args)
         {
-            var apiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
-            GetCapabilities(apiUrl);
+            _apiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
+
+            GetCapabilities();
         }
 
-        private static HttpRequestMessage CreateRequest(XDocument soapXml, string action, string apiUrl)
+        private static HttpRequestMessage CreateRequest(XDocument soapXml, string action)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri(apiUrl),
+                RequestUri = new Uri(_apiUrl),
                 Method = HttpMethod.Post,
-                Content = new StringContent(soapXml.ToString(), Encoding.UTF8, "text/xml")
+                Content = new StringContent(soapXml.ToString(), Encoding.UTF8, XmlMediaType)
             };
 
             request.Headers.Clear();
-            request.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
+
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue(XmlMediaType);
+
             request.Headers.Add("SOAPAction", GeosynchronizationNs.NamespaceName + "/#" + action);
+
             return request;
         }
 
         private static HttpClient GetClient()
         {
             var password = "https_user";
+
             var user = "https_user";
 
             var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
@@ -47,59 +56,94 @@ namespace CORESubscriber
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(XmlMediaType));
 
             return client;
         }
 
-        private static void GetCapabilities(string apiUrl)
+        private static void GetCapabilities()
         {
             const string action = "GetCapabilities";
 
             var getCapabilities = GetSoapContentByAction(action);
 
-            var request = CreateRequest(getCapabilities, action, apiUrl);
+            var request = CreateRequest(getCapabilities, action);
 
             var client = GetClient();
 
             var response = client.SendAsync(request);
 
-            var result = response.Result.Content.ReadAsStringAsync();
+            var content = response.Result.Content.ReadAsStringAsync();
 
-            var datasetFields = new List<string> {"datasetId", "name", "version", "applicationSchema"};
+            var datasetsList = GetDatasets(content.Result);
 
+            UpdateDatasetsDocument(datasetsList);
+        }
+
+        private static IEnumerable<XElement> GetDatasets(string result)
+        {
             var datasetsList = new List<XElement>();
 
-            foreach (var dataset in XDocument.Parse(result.Result).Descendants(GeosynchronizationNs + "datasets")
+            foreach (var dataset in XDocument.Parse(result).Descendants(GeosynchronizationNs + "datasets")
                 .Descendants())
             {
                 var datasetElement = new XElement("dataset");
-                foreach (var field in dataset.Descendants().Where(d => datasetFields.Contains(d.Name.LocalName)))
+
+                datasetElement.Add(new XAttribute("subscribed", false));
+
+                foreach (var field in dataset.Descendants().Where(d => DatasetFields.Contains(d.Name.LocalName)))
                 {
-                    var attribute = new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim());
-                    datasetElement.Add(attribute);
+                    datasetElement.Add(new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim()));
+
                     Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
                 }
 
-                if (!datasetElement.Attributes().Any()) continue;
+                if (datasetElement.Attributes().Count() == 1) continue;
 
-                datasetElement.Add(new XAttribute("subscribed", false));
                 datasetsList.Add(datasetElement);
             }
 
-            var datasetsDocument = XDocument.Parse(File.ReadAllText("Config\\Datasets.xml"));
+            return datasetsList;
+        }
 
+        private static void UpdateDatasetsDocument(IEnumerable<XElement> datasetsList)
+        {
+            var datasetsDocument = XDocument.Parse(File.ReadAllText(ConfigFileProvider));
+
+            CreateProviderIfNotExists(datasetsDocument);
+
+            AddDatasetsToDocument(datasetsList, datasetsDocument);
+
+            datasetsDocument.Save(new FileStream(ConfigFileProvider, FileMode.Open));
+        }
+
+        
+
+        private static void AddDatasetsToDocument(IEnumerable<XElement> datasetsList, XContainer datasetsDocument)
+        {
             foreach (var xElement in datasetsList)
             {
                 if (datasetsDocument.Descendants("datasets").Descendants().Any(d =>
-                    datasetFields.All(f =>
+                    DatasetFields.All(f =>
                         d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
                 ))
                     continue;
-                datasetsDocument.Root?.Add(xElement);
-            }
 
-            datasetsDocument.Save(new FileStream("Config\\Datasets.xml", FileMode.Open));
+                datasetsDocument.Descendants().Where(d => d.Attribute("uri")?.Value == _apiUrl).Descendants("datasets").First()?.Add(xElement);
+            }
+        }
+
+        private static void CreateProviderIfNotExists(XContainer datasetsDocument)
+        {
+            if (datasetsDocument.Descendants("provider").Any(d => d.Attribute("uri")?.Value == _apiUrl)) return;
+
+            var providerElement = new XElement("provider");
+
+            providerElement.Add(new XElement("datasets"));
+
+            providerElement.Add(new XAttribute("uri", _apiUrl));
+
+            datasetsDocument.Descendants("providers").First().Add(providerElement);
         }
 
         private static XDocument GetSoapContentByAction(string action)
