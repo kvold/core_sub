@@ -16,16 +16,23 @@ namespace CORESubscriber
         private static string _apiUrl;
 
         private static readonly List<string> DatasetFields =
-            new List<string> {"datasetId", "name", "applicationSchema", "version"};
+            new List<string> {"datasetId", "name", "version"};
 
         private static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
-        private static readonly List<XAttribute> DefaultAttributes = new List<XAttribute>
+        private static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
+
+        private static readonly List<XAttribute> DatasetDefaults = new List<XAttribute>
         {
             new XAttribute("subscribed", false),
             new XAttribute("lastindex", 0),
             new XAttribute("wfsClient", "")
+        };
+
+        private static readonly List<object> ProviderDefaults = new List<object>
+        {
+            new XElement("datasets")
         };
 
         private static string _password;
@@ -84,23 +91,43 @@ namespace CORESubscriber
 
             var response = client.SendAsync(request);
 
-            var content = response.Result.Content.ReadAsStringAsync();
+            var content = XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result);
 
-            var datasetsList = GetDatasets(content.Result);
+            var capabilitiesFileName = "Capabilities/" + content.Descendants(OwsNs + "Title").First().Value.Normalize().Replace(" ", "_") + ".xml";
+
+            content.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
+
+            SetProviderDefaults(capabilitiesFileName);
+
+            var datasetsList = GetDatasets(content);
 
             UpdateDatasetsDocument(datasetsList);
         }
 
-        private static IEnumerable<XElement> GetDatasets(string result)
+        private static void SetProviderDefaults(string capabilitiesFileName)
+        {
+            var providerDefaults = new List<object>
+            {
+                new XAttribute("uri", _apiUrl),
+                new XAttribute("user", _user),
+                new XAttribute("password", _password),
+                new XAttribute("capabilities", capabilitiesFileName)
+            };
+
+            ProviderDefaults.Add(providerDefaults);
+        }
+
+
+        private static IEnumerable<XElement> GetDatasets(XContainer result)
         {
             var datasetsList = new List<XElement>();
 
-            foreach (var dataset in XDocument.Parse(result).Descendants(GeosynchronizationNs + "datasets")
+            foreach (var dataset in result.Descendants(GeosynchronizationNs + "datasets")
                 .Descendants())
             {
                 var datasetElement = new XElement("dataset");
 
-                datasetElement.Add(DefaultAttributes);
+                datasetElement.Add(DatasetDefaults);
 
                 foreach (var field in dataset.Descendants().Where(d => DatasetFields.Contains(d.Name.LocalName)))
                 {
@@ -109,7 +136,7 @@ namespace CORESubscriber
                     Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
                 }
 
-                if (datasetElement.Attributes().Count() == DefaultAttributes.Count) continue;
+                if (datasetElement.Attributes().Count() == DatasetDefaults.Count) continue;
 
                 datasetsList.Add(datasetElement);
             }
@@ -149,8 +176,7 @@ namespace CORESubscriber
 
             var providerElement = new XElement("provider");
 
-            providerElement.Add(new XElement("datasets"), new XAttribute("uri", _apiUrl), new XAttribute("user", _user),
-                new XAttribute("password", _password));
+            providerElement.Add(ProviderDefaults);
 
             datasetsDocument.Descendants("providers").First().Add(providerElement);
         }
