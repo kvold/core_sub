@@ -11,17 +11,28 @@ namespace CORESubscriber
 {
     internal class Program
     {
-        public static string ConfigFileProvider = "Config\\Providers.xml";
+        private const string ConfigFileProvider = "Config\\Providers.xml";
         private static string _apiUrl;
         private const string XmlMediaType = "text/xml";
         private static readonly List<string> DatasetFields = new List<string> { "datasetId", "name", "applicationSchema", "version" };
         private static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
+        private static readonly List<XAttribute> DefaultAttributes = new List<XAttribute>
+        {
+            new XAttribute("subscribed", false),
+            new XAttribute("lastindex", 0),
+            new XAttribute("wfsClient", "")
+        };
+
+        private static string _password;
+        private static string _user;
 
         private static void Main(string[] args)
         {
             _apiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
-
+            _user = args.Length > 1 ? args[1] : "https_user";
+            _password = args.Length > 2 ? args[2] : "https_user";
+            
             GetCapabilities();
         }
 
@@ -45,11 +56,7 @@ namespace CORESubscriber
 
         private static HttpClient GetClient()
         {
-            var password = "https_user";
-
-            var user = "https_user";
-
-            var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
+            var byteArray = Encoding.ASCII.GetBytes(_user + ":" + _password);
 
             var client = new HttpClient();
 
@@ -76,7 +83,7 @@ namespace CORESubscriber
             var content = response.Result.Content.ReadAsStringAsync();
 
             var datasetsList = GetDatasets(content.Result);
-
+            
             UpdateDatasetsDocument(datasetsList);
         }
 
@@ -89,7 +96,7 @@ namespace CORESubscriber
             {
                 var datasetElement = new XElement("dataset");
 
-                datasetElement.Add(new XAttribute("subscribed", false));
+                datasetElement.Add(DefaultAttributes);
 
                 foreach (var field in dataset.Descendants().Where(d => DatasetFields.Contains(d.Name.LocalName)))
                 {
@@ -98,7 +105,7 @@ namespace CORESubscriber
                     Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
                 }
 
-                if (datasetElement.Attributes().Count() == 1) continue;
+                if (datasetElement.Attributes().Count() == DefaultAttributes.Count) continue;
 
                 datasetsList.Add(datasetElement);
             }
@@ -142,6 +149,10 @@ namespace CORESubscriber
             providerElement.Add(new XElement("datasets"));
 
             providerElement.Add(new XAttribute("uri", _apiUrl));
+
+            providerElement.Add(new XAttribute("user", _user));
+
+            providerElement.Add(new XAttribute("password", _password));
 
             datasetsDocument.Descendants("providers").First().Add(providerElement);
         }
