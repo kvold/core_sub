@@ -79,7 +79,7 @@ namespace CORESubscriber
         {
             const string action = "GetCapabilities";
 
-            var getCapabilities = GetSoapContentByAction(action);
+            var getCapabilities = GetSoapRequestContentByAction(action);
 
             var responseContent = SendRequest(action, getCapabilities);
 
@@ -186,7 +186,7 @@ namespace CORESubscriber
             datasetsDocument.Descendants("providers").First().Add(providerElement);
         }
 
-        private static XDocument GetSoapContentByAction(string action)
+        private static XDocument GetSoapRequestContentByAction(string action)
         {
             return XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
         }
