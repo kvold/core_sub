@@ -20,13 +20,13 @@ namespace CORESubscriber
             GetCapabilities(apiUrl);
         }
 
-        private static HttpRequestMessage CreateRequest(string soapXml, string action, string apiUrl)
+        private static HttpRequestMessage CreateRequest(XDocument soapXml, string action, string apiUrl)
         {
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri(apiUrl),
                 Method = HttpMethod.Post,
-                Content = new StringContent(soapXml, Encoding.UTF8, "text/xml")
+                Content = new StringContent(soapXml.ToString(), Encoding.UTF8, "text/xml")
             };
 
             request.Headers.Clear();
@@ -68,16 +68,46 @@ namespace CORESubscriber
 
             var datasetFields = new List<string> {"datasetId", "name", "version", "applicationSchema"};
 
-            foreach (var field in XDocument.Parse(result.Result).Descendants()
-                .Where(d => datasetFields.Contains(d.Name.LocalName)))
+
+            var datasetsList = new List<XElement>();
+
+            //datasets = !datasets.Descendants().Any() ? new XDocument(new XElement("datasets")) : datasets;
+
+            foreach (var dataset in XDocument.Parse(result.Result).Descendants(GeosynchronizationNs + "datasets")
+                .Descendants())
             {
-                Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
+                var datasetElement = new XElement("dataset");
+                foreach (var field in dataset.Descendants().Where(d => datasetFields.Contains(d.Name.LocalName)))
+                {
+                    var attribute = new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim());
+                    datasetElement.Add(attribute);
+                    Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
+                }
+
+                if (!datasetElement.Attributes().Any()) continue;
+
+                datasetElement.Add(new XAttribute("subscribed", false));
+                datasetsList.Add(datasetElement);
             }
+
+            var datasetsDocument = XDocument.Parse(File.ReadAllText("Config\\Datasets.xml"));
+
+            foreach (var xElement in datasetsList)
+            {
+                if (datasetsDocument.Descendants("datasets").Descendants().Any(d =>
+                    datasetFields.All(f =>
+                        d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
+                ))
+                    continue;
+                datasetsDocument.Root?.Add(xElement);
+            }
+
+            datasetsDocument.Save(new FileStream("Config\\Datasets.xml", FileMode.Open));
         }
 
-        private static string GetSoapContentByAction(string action)
+        private static XDocument GetSoapContentByAction(string action)
         {
-            return File.OpenText("Queries\\" + action + ".xml").ReadToEnd();
+            return XDocument.Parse(File.ReadAllText("Queries\\" + action + ".xml"));
         }
     }
 }
