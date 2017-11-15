@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,66 +11,73 @@ namespace CORESubscriber
 {
     internal class Program
     {
-        private const string ApiUrl = "http://localhost:43397/WebFeatureServiceReplication.svc";
-        private static XNamespace Myns = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
+        private static readonly XNamespace GeosynchronizationNs =
+            "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
         private static void Main(string[] args)
         {
-            TestServiceCall();
+            var apiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
+            GetCapabilities(apiUrl);
         }
 
-        private static HttpRequestMessage CreateRequest(string soapXml, string action)
+        private static HttpRequestMessage CreateRequest(string soapXml, string action, string apiUrl)
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri(ApiUrl),
+                RequestUri = new Uri(apiUrl),
                 Method = HttpMethod.Post,
                 Content = new StringContent(soapXml, Encoding.UTF8, "text/xml")
             };
 
             request.Headers.Clear();
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
-            request.Headers.Add("SOAPAction", Myns.NamespaceName + "/#" + action);
+            request.Headers.Add("SOAPAction", GeosynchronizationNs.NamespaceName + "/#" + action);
             return request;
         }
 
-        private static void AddAuthorization(HttpClient client)
+        private static HttpClient GetClient()
         {
             var password = "https_user";
             var user = "https_user";
 
             var byteArray = Encoding.ASCII.GetBytes(user + ":" + password);
 
+            var client = new HttpClient();
+
             client.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-        }
-
-        private static void TestServiceCall()
-        {
-            var client = new HttpClient();
-
-            //AddAuthorization(client);
-
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
 
-            var getCapabilities = File.OpenText("Queries\\GetCapabilities.xml").ReadToEnd();
+            return client;
+        }
 
-            var request = CreateRequest(getCapabilities, "GetCapabilities");
+        private static void GetCapabilities(string apiUrl)
+        {
+            const string action = "GetCapabilities";
+
+            var getCapabilities = GetSoapContentByAction(action);
+
+            var request = CreateRequest(getCapabilities, action, apiUrl);
+
+            var client = GetClient();
 
             var response = client.SendAsync(request);
 
             var result = response.Result.Content.ReadAsStringAsync();
 
-            var soap = XDocument.Parse(result.Result);
+            var datasetFields = new List<string> {"datasetId", "name", "version", "applicationSchema"};
 
-            foreach (var dataset in soap.Descendants(Myns + "datasets").First().Descendants())
+            foreach (var field in XDocument.Parse(result.Result).Descendants()
+                .Where(d => datasetFields.Contains(d.Name.LocalName)))
             {
-                foreach (var field in dataset.Descendants())
-                {
-                    Console.WriteLine(field.Name.LocalName + ":" + field.Value);
-                }
+                Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
             }
+        }
+
+        private static string GetSoapContentByAction(string action)
+        {
+            return File.OpenText("Queries\\" + action + ".xml").ReadToEnd();
         }
     }
 }
