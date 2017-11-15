@@ -11,30 +11,26 @@ namespace CORESubscriber
 {
     internal class Program
     {
-        private const string ConfigFileProvider = "Config\\Providers.xml";
+        private const string ConfigFileProvider = "Config/Providers.xml";
         private const string XmlMediaType = "text/xml";
-        private static string _apiUrl;
-
+        
         private static readonly List<string> DatasetFields =
             new List<string> {"datasetId", "name", "version"};
 
+        private static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
         private static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
-        private static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
 
-        private static readonly List<XAttribute> DatasetDefaults = new List<XAttribute>
+        private static readonly List<object> ProviderDefaults = new List<object> { new XElement("datasets") };
+        private static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("subscribed", false),
             new XAttribute("lastindex", 0),
             new XAttribute("wfsClient", "")
         };
-
-        private static readonly List<object> ProviderDefaults = new List<object>
-        {
-            new XElement("datasets")
-        };
-
+        
+        private static string _apiUrl;
         private static string _password;
         private static string _user;
 
@@ -87,7 +83,9 @@ namespace CORESubscriber
 
             var responseContent = SendRequest(action, getCapabilities);
 
-            var capabilitiesFileName = "Capabilities/" + responseContent.Descendants(OwsNs + "Title").First().Value.Normalize().Replace(" ", "_") + ".xml";
+            var capabilitiesFileName = "Capabilities/" +
+                                       responseContent.Descendants(OwsNs + "Title").First().Value
+                                           .Replace(" ", "_") + ".xml";
 
             responseContent.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
 
@@ -95,7 +93,7 @@ namespace CORESubscriber
 
             var datasetsList = GetDatasets(responseContent);
 
-            UpdateDatasetsDocument(datasetsList);
+            UpdateConfig(datasetsList);
         }
 
         private static XDocument SendRequest(string action, XDocument requestContent)
@@ -149,9 +147,11 @@ namespace CORESubscriber
             return datasetsList;
         }
 
-        private static void UpdateDatasetsDocument(IEnumerable<XElement> datasetsList)
+        private static void UpdateConfig(IEnumerable<XElement> datasetsList)
         {
-            var datasetsDocument = File.Exists(ConfigFileProvider) ? XDocument.Parse(File.ReadAllText(ConfigFileProvider)) : new XDocument(new XElement("providers"));
+            var datasetsDocument = File.Exists(ConfigFileProvider)
+                ? XDocument.Parse(File.ReadAllText(ConfigFileProvider))
+                : new XDocument(new XElement("providers"));
 
             CreateProviderIfNotExists(datasetsDocument);
 
@@ -188,7 +188,7 @@ namespace CORESubscriber
 
         private static XDocument GetSoapContentByAction(string action)
         {
-            return XDocument.Parse(File.ReadAllText("Queries\\" + action + ".xml"));
+            return XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
         }
     }
 }
