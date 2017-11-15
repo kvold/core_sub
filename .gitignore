@@ -260,5 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Folder for Capabilities
-Capabilities/
+# Folder for Settings
+/CORESubscriber/Capabilities/
+/CORESubscriber/Config/
