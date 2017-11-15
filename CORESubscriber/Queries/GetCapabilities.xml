@@ -1,4 +1,5 @@
-﻿<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:ns="http://www.opengis.net/ows/1.1">
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt" xmlns:ns="http://www.opengis.net/ows/1.1">
   <soapenv:Header/>
   <soapenv:Body>
     <prod:GetCapabilities>
