@@ -12,11 +12,15 @@ namespace CORESubscriber
     internal class Program
     {
         private const string ConfigFileProvider = "Config\\Providers.xml";
-        private static string _apiUrl;
         private const string XmlMediaType = "text/xml";
-        private static readonly List<string> DatasetFields = new List<string> { "datasetId", "name", "applicationSchema", "version" };
+        private static string _apiUrl;
+
+        private static readonly List<string> DatasetFields =
+            new List<string> {"datasetId", "name", "applicationSchema", "version"};
+
         private static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
+
         private static readonly List<XAttribute> DefaultAttributes = new List<XAttribute>
         {
             new XAttribute("subscribed", false),
@@ -32,7 +36,7 @@ namespace CORESubscriber
             _apiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
             _user = args.Length > 1 ? args[1] : "https_user";
             _password = args.Length > 2 ? args[2] : "https_user";
-            
+
             GetCapabilities();
         }
 
@@ -83,7 +87,7 @@ namespace CORESubscriber
             var content = response.Result.Content.ReadAsStringAsync();
 
             var datasetsList = GetDatasets(content.Result);
-            
+
             UpdateDatasetsDocument(datasetsList);
         }
 
@@ -124,8 +128,6 @@ namespace CORESubscriber
             datasetsDocument.Save(new FileStream(ConfigFileProvider, FileMode.Open));
         }
 
-        
-
         private static void AddDatasetsToDocument(IEnumerable<XElement> datasetsList, XContainer datasetsDocument)
         {
             foreach (var xElement in datasetsList)
@@ -136,7 +138,8 @@ namespace CORESubscriber
                 ))
                     continue;
 
-                datasetsDocument.Descendants().Where(d => d.Attribute("uri")?.Value == _apiUrl).Descendants("datasets").First()?.Add(xElement);
+                datasetsDocument.Descendants().Where(d => d.Attribute("uri")?.Value == _apiUrl).Descendants("datasets")
+                    .First()?.Add(xElement);
             }
         }
 
@@ -146,13 +149,8 @@ namespace CORESubscriber
 
             var providerElement = new XElement("provider");
 
-            providerElement.Add(new XElement("datasets"));
-
-            providerElement.Add(new XAttribute("uri", _apiUrl));
-
-            providerElement.Add(new XAttribute("user", _user));
-
-            providerElement.Add(new XAttribute("password", _password));
+            providerElement.Add(new XElement("datasets"), new XAttribute("uri", _apiUrl), new XAttribute("user", _user),
+                new XAttribute("password", _password));
 
             datasetsDocument.Descendants("providers").First().Add(providerElement);
         }
