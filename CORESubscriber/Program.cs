@@ -85,23 +85,28 @@ namespace CORESubscriber
 
             var getCapabilities = GetSoapContentByAction(action);
 
-            var request = CreateRequest(getCapabilities, action);
+            var responseContent = SendRequest(action, getCapabilities);
+
+            var capabilitiesFileName = "Capabilities/" + responseContent.Descendants(OwsNs + "Title").First().Value.Normalize().Replace(" ", "_") + ".xml";
+
+            responseContent.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
+
+            SetProviderDefaults(capabilitiesFileName);
+
+            var datasetsList = GetDatasets(responseContent);
+
+            UpdateDatasetsDocument(datasetsList);
+        }
+
+        private static XDocument SendRequest(string action, XDocument requestContent)
+        {
+            var request = CreateRequest(requestContent, action);
 
             var client = GetClient();
 
             var response = client.SendAsync(request);
 
-            var content = XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result);
-
-            var capabilitiesFileName = "Capabilities/" + content.Descendants(OwsNs + "Title").First().Value.Normalize().Replace(" ", "_") + ".xml";
-
-            content.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
-
-            SetProviderDefaults(capabilitiesFileName);
-
-            var datasetsList = GetDatasets(content);
-
-            UpdateDatasetsDocument(datasetsList);
+            return XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result);
         }
 
         private static void SetProviderDefaults(string capabilitiesFileName)
