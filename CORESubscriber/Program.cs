@@ -146,13 +146,13 @@ namespace CORESubscriber
 
         private static void UpdateDatasetsDocument(IEnumerable<XElement> datasetsList)
         {
-            var datasetsDocument = XDocument.Parse(File.ReadAllText(ConfigFileProvider));
+            var datasetsDocument = File.Exists(ConfigFileProvider) ? XDocument.Parse(File.ReadAllText(ConfigFileProvider)) : new XDocument(new XElement("providers"));
 
             CreateProviderIfNotExists(datasetsDocument);
 
             AddDatasetsToDocument(datasetsList, datasetsDocument);
 
-            datasetsDocument.Save(new FileStream(ConfigFileProvider, FileMode.Open));
+            datasetsDocument.Save(new FileStream(ConfigFileProvider, FileMode.OpenOrCreate));
         }
 
         private static void AddDatasetsToDocument(IEnumerable<XElement> datasetsList, XContainer datasetsDocument)
