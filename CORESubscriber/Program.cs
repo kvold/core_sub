@@ -68,10 +68,7 @@ namespace CORESubscriber
 
             var datasetFields = new List<string> {"datasetId", "name", "version", "applicationSchema"};
 
-
             var datasetsList = new List<XElement>();
-
-            //datasets = !datasets.Descendants().Any() ? new XDocument(new XElement("datasets")) : datasets;
 
             foreach (var dataset in XDocument.Parse(result.Result).Descendants(GeosynchronizationNs + "datasets")
                 .Descendants())
