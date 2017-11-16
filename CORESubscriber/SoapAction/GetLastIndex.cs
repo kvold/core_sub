@@ -13,27 +13,27 @@ namespace CORESubscriber.SoapAction
 
             var getLastIndex = SoapRequest.GetSoapContentByAction(action);
 
-            getLastIndex.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Config.DatasetId;
+            getLastIndex.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Provider.DatasetId;
 
             var providerLastIndex = Convert.ToInt64(SoapRequest.Send(action, getLastIndex)
                 .Descendants(Config.GeosynchronizationNs + "return").First().Value);
 
-            return providerLastIndex > Config.SubscriberLastIndex;
+            return providerLastIndex > Provider.SubscriberLastIndex;
         }
 
         private static void ReadConfig()
         {
-            var configFile = Config.ReadConfigFile();
+            var configFile = Provider.ReadConfigFile();
 
-            var provider = configFile.Descendants("provider").First(p => p.Attribute("uri")?.Value == Config.ApiUrl);
+            var provider = configFile.Descendants("provider").First(p => p.Attribute("uri")?.Value == Provider.ApiUrl);
 
-            Config.Password = provider.Attribute("password")?.Value;
+            Provider.Password = provider.Attribute("password")?.Value;
 
-            Config.User = provider.Attribute("user")?.Value;
+            Provider.User = provider.Attribute("user")?.Value;
 
-            var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == Config.DatasetId);
+            var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId);
 
-            Config.SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("lastindex")?.Value);
+            Provider.SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("lastindex")?.Value);
         }
     }
 }

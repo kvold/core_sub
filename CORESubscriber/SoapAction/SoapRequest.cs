@@ -27,7 +27,7 @@ namespace CORESubscriber.SoapAction
 
         private static HttpClient GetClient()
         {
-            var byteArray = Encoding.ASCII.GetBytes(Config.User + ":" + Config.Password);
+            var byteArray = Encoding.ASCII.GetBytes(Provider.User + ":" + Provider.Password);
 
             var client = new HttpClient();
 
@@ -43,7 +43,7 @@ namespace CORESubscriber.SoapAction
         {
             var request = new HttpRequestMessage
             {
-                RequestUri = new Uri(Config.ApiUrl),
+                RequestUri = new Uri(Provider.ApiUrl),
                 Method = HttpMethod.Post,
                 Content = new StringContent(soapXml.ToString(), Encoding.UTF8, Config.XmlMediaType)
             };

@@ -19,17 +19,13 @@ namespace CORESubscriber.SoapAction
             var fileName = responseContent.Descendants(Config.OwsNs + "Title").First().Value
                                .Replace(" ", "_") + ".xml";
 
-            Config.ConfigFileProvider = "Config/" + fileName;
+            Provider.ConfigFile = "Providers/" + fileName;
 
-            var capabilitiesFileName = "Capabilities/" + fileName;
-
-            responseContent.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
-
-            Config.SetProviderDefaults(capabilitiesFileName);
+            Provider.SetProviderDefaults();
 
             var datasetsList = GetDatasets(responseContent);
 
-            Config.UpdateConfig(datasetsList);
+            Provider.Save(datasetsList);
 
             return true;
         }
@@ -43,16 +39,16 @@ namespace CORESubscriber.SoapAction
             {
                 var datasetElement = new XElement("dataset");
 
-                datasetElement.Add(Config.DatasetDefaults);
+                datasetElement.Add(Provider.DatasetDefaults);
 
-                foreach (var field in dataset.Descendants().Where(d => Config.DatasetFields.Contains(d.Name.LocalName)))
+                foreach (var field in dataset.Descendants().Where(d => Provider.DatasetFields.Contains(d.Name.LocalName)))
                 {
                     datasetElement.Add(new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim()));
 
                     Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
                 }
 
-                if (datasetElement.Attributes().Count() == Config.DatasetDefaults.Count) continue;
+                if (datasetElement.Attributes().Count() == Provider.DatasetDefaults.Count) continue;
 
                 datasetsList.Add(datasetElement);
             }

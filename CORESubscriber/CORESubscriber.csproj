@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Capabilities\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Queries\GetCapabilities.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

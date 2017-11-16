@@ -26,14 +26,14 @@ namespace CORESubscriber
             switch (actionArg)
             {
                 case "sync":
-                    Config.ConfigFileProvider = args[1];
-                    Config.DatasetId = args[2];
+                    Provider.ConfigFile = args[1];
+                    Provider.DatasetId = args[2];
                     if (GetLastIndex.Run()) OrderChangelog.Run();
                     break;
                 case "add":
-                    Config.ApiUrl = args[1];
-                    Config.User = args[2];
-                    Config.Password = args[3];
+                    Provider.ApiUrl = args[1];
+                    Provider.User = args[2];
+                    Provider.Password = args[3];
                     GetCapabilities.Run();
                     break;
                 default:
