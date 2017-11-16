@@ -9,15 +9,11 @@ namespace CORESubscriber
 {
     internal class Config
     {
-        public static string Password { get; set; }
-
-        public static string User { get; set; }
-
-        public static string ApiUrl { get; set; }
-
         private const string ConfigFileProvider = "Config/Providers.xml";
 
-        public static readonly List<object> ProviderDefaults = new List<object> { new XElement("datasets") };
+        internal const string XmlMediaType = "text/xml";
+
+        public static readonly List<object> ProviderDefaults = new List<object> {new XElement("datasets")};
 
         public static readonly List<object> DatasetDefaults = new List<object>
         {
@@ -25,16 +21,20 @@ namespace CORESubscriber
             new XAttribute("lastindex", 0),
             new XAttribute("wfsClient", "")
         };
-        
-        internal const string XmlMediaType = "text/xml";
-        
+
         internal static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
 
         internal static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
         internal static readonly List<string> DatasetFields =
-            new List<string> { "datasetId", "name", "version" };
+            new List<string> {"datasetId", "name", "version"};
+
+        public static string Password { get; set; }
+
+        public static string User { get; set; }
+
+        public static string ApiUrl { get; set; }
 
         internal static string DatasetId { get; set; }
         public static long SubscriberLastIndex { get; set; }
