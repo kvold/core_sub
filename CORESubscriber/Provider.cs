@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Xml.Linq;
 
 namespace CORESubscriber
@@ -55,8 +57,30 @@ namespace CORESubscriber
                 ))
                     continue;
 
+                // ReSharper disable once PossibleNullReferenceException
+                xElement.Attribute("nameSpace").Value = GetNamespaceFromApplicationSchema(xElement.Attribute("applicationSchema")?.Value);
+
                 datasetsDocument.Descendants("provider")
                     .First()?.Add(xElement);
+            }
+        }
+
+        private static string GetNamespaceFromApplicationSchema(string applicationSchema)
+        {
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    var result = client.GetAsync(applicationSchema).Result;
+
+                    var xsd = XDocument.Parse(result.Content.ReadAsStringAsync().Result);
+
+                    return xsd.Root?.Attribute("targetNamespace")?.Value;
+                }
+                catch (Exception)
+                {
+                    return "";
+                }
             }
         }
 
