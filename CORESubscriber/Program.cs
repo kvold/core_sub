@@ -1,20 +1,34 @@
 ﻿using System;
+using System.Collections.Generic;
 using CORESubscriber.SoapAction;
 
 namespace CORESubscriber
 {
     internal class Program
     {
+        internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
+        {
+            { "sync", new List<string>{ "configFile", "datasetId" } },
+            { "add", new List<string> { "uri", "user", "password"} }
+        };
+
+
         private static void Main(string[] args)
         {
-            var action = args[0];
+            if (args.Length > 0) RunAction(args);
+            else WriteHelp();
+        }
 
-            switch (action)
+        private static void RunAction(IReadOnlyList<string> args)
+        {
+            var actionArg = args[0];
+
+            switch (actionArg)
             {
                 case "sync":
                     Config.ConfigFileProvider = args[1];
                     Config.DatasetId = args[2];
-                    if(GetLastIndex.Run()) OrderChangelog.Run();
+                    if (GetLastIndex.Run()) OrderChangelog.Run();
                     break;
                 case "add":
                     Config.ApiUrl = args[1];
@@ -23,7 +37,19 @@ namespace CORESubscriber
                     GetCapabilities.Run();
                     break;
                 default:
-                    throw new NotImplementedException("Action " + action + "not implemented");
+                    WriteHelp();
+                    break;
+            }
+        }
+
+        private static void WriteHelp()
+        {
+            Console.WriteLine("Syntax: action [parameters]");
+            Console.WriteLine();
+            foreach (var action in Actions)
+            {
+                Console.WriteLine(action.Key + ":");
+                foreach (var parameter in action.Value) Console.WriteLine("\t" + parameter);
             }
         }
     }
