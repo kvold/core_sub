@@ -9,7 +9,7 @@ namespace CORESubscriber
 {
     internal class Config
     {
-        private const string ConfigFileProvider = "Config/Providers.xml";
+        internal static string ConfigFileProvider = "Config/Providers.xml";
 
         internal const string XmlMediaType = "text/xml";
 
@@ -40,26 +40,21 @@ namespace CORESubscriber
 
         internal static long SubscriberLastIndex { get; set; }
 
-        internal static ISoapAction ReadArgs(string[] args)
+        internal static object ReadArgs(string[] args)
         {
             var action = args[0].ToLower();
 
             switch (action)
             {
                 case "sync":
-                    ApiUrl = args[1];
+                    ConfigFileProvider = args[1];
                     DatasetId = args[2];
-                    var getLastIndex = new GetLastIndex();
-                    return getLastIndex.Run() ? new OrderChangelog() : null;
-                case "getcapabilities":
+                    return GetLastIndex.Run() ? new OrderChangelog() : null;
+                case "add":
                     ApiUrl = args[1];
                     User = args[2];
                     Password = args[3];
-                    return new GetCapabilities();
-                case "getlastindex":
-                    ApiUrl = args[1];
-                    DatasetId = args[2];
-                    return new GetLastIndex();
+                    return GetCapabilities.Run();
                 default:
                     throw new NotImplementedException("Action " + action + "not implemented");
             }
@@ -67,11 +62,7 @@ namespace CORESubscriber
 
         internal static void UpdateConfig(IEnumerable<XElement> datasetsList)
         {
-            var datasetsDocument = File.Exists(ConfigFileProvider)
-                ? ReadConfigFile()
-                : new XDocument(new XElement("providers"));
-
-            CreateProviderIfNotExists(datasetsDocument);
+            var datasetsDocument = File.Exists(ConfigFileProvider) ? ReadConfigFile() : new XDocument(CreateDefaultProvider());
 
             AddDatasetsToDocument(datasetsList, datasetsDocument);
 
@@ -98,15 +89,13 @@ namespace CORESubscriber
             }
         }
 
-        private static void CreateProviderIfNotExists(XContainer datasetsDocument)
+        private static XElement CreateDefaultProvider()
         {
-            if (datasetsDocument.Descendants("provider").Any(d => d.Attribute("uri")?.Value == ApiUrl)) return;
-
             var providerElement = new XElement("provider");
 
             providerElement.Add(ProviderDefaults);
 
-            datasetsDocument.Descendants("providers").First().Add(providerElement);
+            return providerElement;
         }
 
         internal static void SetProviderDefaults(string capabilitiesFileName)

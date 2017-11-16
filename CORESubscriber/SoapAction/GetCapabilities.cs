@@ -6,9 +6,9 @@ using System.Xml.Linq;
 
 namespace CORESubscriber.SoapAction
 {
-    public class GetCapabilities : ISoapAction
+    public class GetCapabilities
     {
-        public bool Run()
+        public static bool Run()
         {
             const string action = "GetCapabilities";
 
@@ -16,9 +16,12 @@ namespace CORESubscriber.SoapAction
 
             var responseContent = SoapRequest.Send(action, getCapabilities);
 
-            var capabilitiesFileName = "Capabilities/" +
-                                       responseContent.Descendants(Config.OwsNs + "Title").First().Value
-                                           .Replace(" ", "_") + ".xml";
+            var fileName = responseContent.Descendants(Config.OwsNs + "Title").First().Value
+                               .Replace(" ", "_") + ".xml";
+
+            Config.ConfigFileProvider = "Config/" + fileName;
+
+            var capabilitiesFileName = "Capabilities/" + fileName;
 
             responseContent.Save(new FileStream(capabilitiesFileName, FileMode.OpenOrCreate));
 

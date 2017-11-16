@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace CORESubscriber.SoapAction
 {
-    internal class GetLastIndex : ISoapAction
+    internal class GetLastIndex
     {
-        public bool Run()
+        public static bool Run()
         {
             ReadConfig();
 
