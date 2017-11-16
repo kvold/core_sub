@@ -21,9 +21,7 @@ namespace CORESubscriber
 
         private static void RunAction(IReadOnlyList<string> args)
         {
-            var actionArg = args[0];
-
-            switch (actionArg)
+            switch (args[0])
             {
                 case "sync":
                     Provider.ConfigFile = args[1];
