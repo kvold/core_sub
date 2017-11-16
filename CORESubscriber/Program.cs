@@ -8,8 +8,8 @@ namespace CORESubscriber
     {
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
         {
-            { "sync", new List<string>{ "configFile", "datasetId" } },
-            { "add", new List<string> { "uri", "user", "password"} }
+            {"sync", new List<string> {"configFile", "datasetId"}},
+            {"add", new List<string> {"uri", "user", "password"}}
         };
 
 

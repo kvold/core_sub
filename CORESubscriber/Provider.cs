@@ -73,7 +73,8 @@ namespace CORESubscriber
                     continue;
 
                 // ReSharper disable once PossibleNullReferenceException
-                xElement.Attribute("nameSpace").Value = GetNamespaceFromApplicationSchema(xElement.Attribute("applicationSchema")?.Value);
+                xElement.Attribute("nameSpace").Value =
+                    GetNamespaceFromApplicationSchema(xElement.Attribute("applicationSchema")?.Value);
 
                 datasetsDocument.Descendants("provider")
                     .First()?.Add(xElement);
