@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using CORESubscriber.SoapAction;
 
 namespace CORESubscriber
 {
@@ -17,11 +18,12 @@ namespace CORESubscriber
         internal static readonly List<string> DatasetFields =
             new List<string> { "datasetId", "name", "version" };
 
-        public static void ReadArgs(string[] args)
+        public static ISoapAction ReadArgs(string[] args)
         {
             ApiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
             User = args.Length > 1 ? args[1] : "https_user";
             Password = args.Length > 2 ? args[2] : "https_user";
+            return new GetCapabilities();
         }
 
         public static void UpdateConfig(IEnumerable<XElement> datasetsList)

@@ -4,8 +4,7 @@
     {
         private static void Main(string[] args)
         {
-            Config.ReadArgs(args);
-            SoapAction.ISoapAction soapAction = new SoapAction.GetCapabilities();
+            var soapAction = Config.ReadArgs(args);
             soapAction.Run(args);
         }
     }
