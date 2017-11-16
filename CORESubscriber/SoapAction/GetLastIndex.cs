@@ -33,7 +33,7 @@ namespace CORESubscriber.SoapAction
 
             var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId);
 
-            Provider.SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("lastindex")?.Value);
+            Provider.SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("subscriberLastindex")?.Value);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CORESubscriber
         public static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
-            new XAttribute("lastindex", 0),
+            new XAttribute("subscriberLastindex", 0),
             new XAttribute("wfsClient", "")
         };
 
