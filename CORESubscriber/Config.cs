@@ -18,11 +18,15 @@ namespace CORESubscriber
         internal static readonly List<string> DatasetFields =
             new List<string> { "datasetId", "name", "version" };
 
+        internal static string DatasetId { get; set; }
+
         public static ISoapAction ReadArgs(string[] args)
         {
             ApiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
             User = args.Length > 1 ? args[1] : "https_user";
             Password = args.Length > 2 ? args[2] : "https_user";
+            DatasetId = args.Length > 3 ? args[3] : "14";
+            return new GetLastIndex();
             return new GetCapabilities();
         }
 
