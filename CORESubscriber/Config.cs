@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -8,6 +9,23 @@ namespace CORESubscriber
 {
     internal class Config
     {
+        public static string Password { get; set; }
+
+        public static string User { get; set; }
+
+        public static string ApiUrl { get; set; }
+
+        private const string ConfigFileProvider = "Config/Providers.xml";
+
+        public static readonly List<object> ProviderDefaults = new List<object> { new XElement("datasets") };
+
+        public static readonly List<object> DatasetDefaults = new List<object>
+        {
+            new XAttribute("subscribed", false),
+            new XAttribute("lastindex", 0),
+            new XAttribute("wfsClient", "")
+        };
+        
         internal const string XmlMediaType = "text/xml";
         
         internal static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
@@ -19,21 +37,32 @@ namespace CORESubscriber
             new List<string> { "datasetId", "name", "version" };
 
         internal static string DatasetId { get; set; }
+        public static long SubscriberLastIndex { get; set; }
 
         public static ISoapAction ReadArgs(string[] args)
         {
-            ApiUrl = args.Length > 0 ? args[0] : "http://localhost:43397/WebFeatureServiceReplication.svc";
-            User = args.Length > 1 ? args[1] : "https_user";
-            Password = args.Length > 2 ? args[2] : "https_user";
-            DatasetId = args.Length > 3 ? args[3] : "14";
-            return new GetLastIndex();
-            return new GetCapabilities();
+            var action = args[0].ToLower();
+
+            switch (action)
+            {
+                case "getcapabilities":
+                    ApiUrl = args[1];
+                    User = args[2];
+                    Password = args[3];
+                    return new GetCapabilities();
+                case "getlastindex":
+                    ApiUrl = args[1];
+                    DatasetId = args[2];
+                    return new GetLastIndex();
+                default:
+                    throw new NotImplementedException("Action " + action + "not implemented");
+            }
         }
 
         public static void UpdateConfig(IEnumerable<XElement> datasetsList)
         {
             var datasetsDocument = File.Exists(ConfigFileProvider)
-                ? XDocument.Parse(File.ReadAllText(ConfigFileProvider))
+                ? ReadConfigFile()
                 : new XDocument(new XElement("providers"));
 
             CreateProviderIfNotExists(datasetsDocument);
@@ -41,6 +70,11 @@ namespace CORESubscriber
             AddDatasetsToDocument(datasetsList, datasetsDocument);
 
             datasetsDocument.Save(new FileStream(ConfigFileProvider, FileMode.OpenOrCreate));
+        }
+
+        internal static XDocument ReadConfigFile()
+        {
+            return XDocument.Parse(File.ReadAllText(ConfigFileProvider));
         }
 
         private static void AddDatasetsToDocument(IEnumerable<XElement> datasetsList, XContainer datasetsDocument)
@@ -81,22 +115,5 @@ namespace CORESubscriber
 
             ProviderDefaults.Add(providerDefaults);
         }
-
-        public static string Password { get; set; }
-
-        public static string User { get; set; }
-
-        public static string ApiUrl { get; set; }
-
-        private const string ConfigFileProvider = "Config/Providers.xml";
-
-        public static readonly List<object> ProviderDefaults = new List<object> { new XElement("datasets") };
-
-        public static readonly List<object> DatasetDefaults = new List<object>
-        {
-            new XAttribute("subscribed", false),
-            new XAttribute("lastindex", 0),
-            new XAttribute("wfsClient", "")
-        };
     }
 }
