@@ -261,5 +261,4 @@ __pycache__/
 *.pyc
 
 # Folder for Settings
-/CORESubscriber/Capabilities/
-/CORESubscriber/Config/
+/CORESubscriber/Providers/
