@@ -1,7 +1,6 @@
 ﻿using System;
-using CORESubscriber.SoapAction;
 
-namespace CORESubscriber
+namespace CORESubscriber.SoapAction
 {
     internal class OrderChangelog : ISoapAction
     {
