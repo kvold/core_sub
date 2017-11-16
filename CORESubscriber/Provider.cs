@@ -11,7 +11,7 @@ namespace CORESubscriber
     {
         internal static string ConfigFile;
 
-        public static readonly List<object> DatasetDefaults = new List<object>
+        internal static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
             new XAttribute("subscriberLastindex", 0),
@@ -29,7 +29,7 @@ namespace CORESubscriber
 
         internal static string DatasetId { get; set; }
 
-        public static string ApplicationSchema { get; set; }
+        internal static string ApplicationSchema { get; set; }
 
         internal static long SubscriberLastIndex { get; set; }
 
@@ -42,7 +42,22 @@ namespace CORESubscriber
             datasetsDocument.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
         }
 
-        internal static XDocument ReadConfigFile()
+        internal static void ReadProviderSettings()
+        {
+            var configFile = ReadConfigFile();
+
+            var provider = configFile.Descendants("provider").First(p => p.Attribute("uri")?.Value == ApiUrl);
+
+            Password = provider.Attribute("password")?.Value;
+
+            User = provider.Attribute("user")?.Value;
+
+            var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == DatasetId);
+
+            SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("subscriberLastindex")?.Value);
+        }
+
+        private static XDocument ReadConfigFile()
         {
             return XDocument.Parse(File.ReadAllText(ConfigFile));
         }

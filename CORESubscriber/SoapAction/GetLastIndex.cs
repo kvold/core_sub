@@ -7,7 +7,7 @@ namespace CORESubscriber.SoapAction
     {
         public static bool Run()
         {
-            ReadConfig();
+            Provider.ReadProviderSettings();
 
             const string action = "GetLastIndex";
 
@@ -19,21 +19,6 @@ namespace CORESubscriber.SoapAction
                 .Descendants(Config.GeosynchronizationNs + "return").First().Value);
 
             return providerLastIndex > Provider.SubscriberLastIndex;
-        }
-
-        private static void ReadConfig()
-        {
-            var configFile = Provider.ReadConfigFile();
-
-            var provider = configFile.Descendants("provider").First(p => p.Attribute("uri")?.Value == Provider.ApiUrl);
-
-            Provider.Password = provider.Attribute("password")?.Value;
-
-            Provider.User = provider.Attribute("user")?.Value;
-
-            var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId);
-
-            Provider.SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("subscriberLastindex")?.Value);
         }
     }
 }
