@@ -8,9 +8,7 @@ namespace CORESubscriber.SoapAction
 {
     public class GetCapabilities : ISoapAction
     {
-
-
-        public void Run(string[] args)
+        public bool Run()
         {
             const string action = "GetCapabilities";
 
@@ -29,6 +27,8 @@ namespace CORESubscriber.SoapAction
             var datasetsList = GetDatasets(responseContent);
 
             Config.UpdateConfig(datasetsList);
+
+            return true;
         }
 
         private static IEnumerable<XElement> GetDatasets(XContainer result)
@@ -56,7 +56,5 @@ namespace CORESubscriber.SoapAction
 
             return datasetsList;
         }
-
-
     }
 }

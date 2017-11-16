@@ -2,6 +2,6 @@
 {
     public interface ISoapAction
     {
-        void Run(string[] args);
+        bool Run();
     }
 }
