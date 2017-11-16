@@ -9,8 +9,6 @@ namespace CORESubscriber
     {
         internal static string ConfigFile;
 
-        public static readonly List<object> ProviderDefaults = new List<object> {new XElement("datasets")};
-
         public static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
@@ -51,13 +49,13 @@ namespace CORESubscriber
         {
             foreach (var xElement in datasetsList)
             {
-                if (datasetsDocument.Descendants("datasets").Descendants().Any(d =>
+                if (datasetsDocument.Descendants("provider").Descendants().Any(d =>
                     DatasetFields.All(f =>
                         d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
                 ))
                     continue;
 
-                datasetsDocument.Descendants("datasets")
+                datasetsDocument.Descendants("provider")
                     .First()?.Add(xElement);
             }
         }
@@ -66,20 +64,14 @@ namespace CORESubscriber
         {
             var providerElement = new XElement("provider");
 
-            providerElement.Add(ProviderDefaults);
-
-            return providerElement;
-        }
-
-        internal static void SetProviderDefaults()
-        {
-            ProviderDefaults.Add(new List<object>
+            providerElement.Add(new List<object>
             {
                 new XAttribute("uri", ApiUrl),
                 new XAttribute("user", User),
-                new XAttribute("password", Password),
-                new XAttribute("applicationSchema", "")
+                new XAttribute("password", Password)
             });
+
+            return providerElement;
         }
     }
 }

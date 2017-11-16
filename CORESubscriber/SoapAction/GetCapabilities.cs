@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -20,8 +19,6 @@ namespace CORESubscriber.SoapAction
                                .Replace(" ", "_") + ".xml";
 
             Provider.ConfigFile = "Providers/" + fileName;
-
-            Provider.SetProviderDefaults();
 
             var datasetsList = GetDatasets(responseContent);
 
