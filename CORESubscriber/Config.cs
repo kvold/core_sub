@@ -30,21 +30,27 @@ namespace CORESubscriber
         internal static readonly List<string> DatasetFields =
             new List<string> {"datasetId", "name", "version"};
 
-        public static string Password { get; set; }
+        internal static string Password { get; set; }
 
-        public static string User { get; set; }
+        internal static string User { get; set; }
 
-        public static string ApiUrl { get; set; }
+        internal static string ApiUrl { get; set; }
 
         internal static string DatasetId { get; set; }
-        public static long SubscriberLastIndex { get; set; }
 
-        public static ISoapAction ReadArgs(string[] args)
+        internal static long SubscriberLastIndex { get; set; }
+
+        internal static ISoapAction ReadArgs(string[] args)
         {
             var action = args[0].ToLower();
 
             switch (action)
             {
+                case "sync":
+                    ApiUrl = args[1];
+                    DatasetId = args[2];
+                    var getLastIndex = new GetLastIndex();
+                    return getLastIndex.Run() ? new OrderChangelog() : null;
                 case "getcapabilities":
                     ApiUrl = args[1];
                     User = args[2];
@@ -59,7 +65,7 @@ namespace CORESubscriber
             }
         }
 
-        public static void UpdateConfig(IEnumerable<XElement> datasetsList)
+        internal static void UpdateConfig(IEnumerable<XElement> datasetsList)
         {
             var datasetsDocument = File.Exists(ConfigFileProvider)
                 ? ReadConfigFile()
