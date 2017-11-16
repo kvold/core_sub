@@ -9,7 +9,7 @@ namespace CORESubscriber
 {
     internal class Config
     {
-        internal static string ConfigFileProvider = "Config/Providers.xml";
+        internal static string ConfigFileProvider;
 
         internal const string XmlMediaType = "text/xml";
 
@@ -39,26 +39,6 @@ namespace CORESubscriber
         internal static string DatasetId { get; set; }
 
         internal static long SubscriberLastIndex { get; set; }
-
-        internal static object ReadArgs(string[] args)
-        {
-            var action = args[0].ToLower();
-
-            switch (action)
-            {
-                case "sync":
-                    ConfigFileProvider = args[1];
-                    DatasetId = args[2];
-                    return GetLastIndex.Run() ? new OrderChangelog() : null;
-                case "add":
-                    ApiUrl = args[1];
-                    User = args[2];
-                    Password = args[3];
-                    return GetCapabilities.Run();
-                default:
-                    throw new NotImplementedException("Action " + action + "not implemented");
-            }
-        }
 
         internal static void UpdateConfig(IEnumerable<XElement> datasetsList)
         {

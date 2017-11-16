@@ -2,9 +2,9 @@
 
 namespace CORESubscriber.SoapAction
 {
-    internal class OrderChangelog : ISoapAction
+    internal class OrderChangelog
     {
-        public bool Run()
+        public static bool Run()
         {
             throw new NotImplementedException();
         }
