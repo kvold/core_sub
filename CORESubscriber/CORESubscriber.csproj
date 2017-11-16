@@ -9,4 +9,13 @@
     <Folder Include="Capabilities\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Queries\GetCapabilities.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Queries\GetLastIndex.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
