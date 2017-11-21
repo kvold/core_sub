@@ -13,6 +13,8 @@ namespace CORESubscriber
     {
         internal static string ConfigFile;
 
+        internal static XDocument ConfigFileXml { get; set; }
+
         internal static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
@@ -43,29 +45,29 @@ namespace CORESubscriber
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
-            var datasetsDocument = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(new XComment("Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."), CreateDefaultProvider());
+            ConfigFileXml = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(new XComment("Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."), CreateDefaultProvider());
 
-            AddDatasetsToDocument(datasetsList, datasetsDocument);
+            AddDatasetsToDocument(datasetsList, ConfigFileXml);
 
-            datasetsDocument.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
+            ConfigFileXml.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
         }
 
         internal static void Save()
         {
-            var datasetsDocument = ReadConfigFile();
+            ConfigFileXml = ReadConfigFile();
 
             // ReSharper disable once PossibleNullReferenceException
-            datasetsDocument.Descendants("dataset").First(d => d.Attribute("datasetId")?.Value == DatasetId)
+            ConfigFileXml.Descendants("dataset").First(d => d.Attribute("datasetId")?.Value == DatasetId)
                 .Descendants("abortedChangelog").First().Attribute("changelogId").Value = OrderedChangelogId.ToString();
 
-            datasetsDocument.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
+            ConfigFileXml.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
         }
 
         internal static void ReadProviderSettings()
         {
-            var configFile = ReadConfigFile();
+            ConfigFileXml = ReadConfigFile();
 
-            var provider = configFile.Descendants("provider").First();
+            var provider = ConfigFileXml.Descendants("provider").First();
 
             Password = provider.Attribute("password")?.Value;
 

@@ -7,8 +7,6 @@ namespace CORESubscriber.SoapAction
     {
         public static bool Run()
         {
-            Provider.ReadProviderSettings();
-
             const string action = "GetLastIndex";
 
             var getLastIndex = SoapRequest.GetSoapContentByAction(action);

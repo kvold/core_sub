@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using CORESubscriber.SoapAction;
 
 namespace CORESubscriber
@@ -8,7 +10,7 @@ namespace CORESubscriber
     {
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
         {
-            {"sync", new List<string> {"configFile", "datasetId"}},
+            {"sync", new List<string> {"configFile"}},
             {"add", new List<string> {"uri", "user", "password"}}
         };
 
@@ -25,9 +27,11 @@ namespace CORESubscriber
             {
                 case "sync":
                     Provider.ConfigFile = args[1];
-                    Provider.DatasetId = args[2];
-                    if (GetLastIndex.Run())
+                    Provider.ReadProviderSettings();
+                    foreach (var subscribed in Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed").Where( s => string.Equals(s.Value.ToString(), bool.TrueString, StringComparison.CurrentCultureIgnoreCase)))
                     {
+                        Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
+                        if (!GetLastIndex.Run()) continue;
                         OrderChangelog.Run();
                         GetChangelogStatus.Run();
                         Provider.OrderedChangelogDownloadUrl = GetChangelog.Run();
