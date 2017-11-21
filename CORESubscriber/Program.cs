@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using CORESubscriber.SoapAction;
 
 namespace CORESubscriber
@@ -30,7 +29,7 @@ namespace CORESubscriber
                     if (GetLastIndex.Run())
                     {
                         OrderChangelog.Run();
-                        while (!GetChangelogStatus.Run()) Task.Delay(3000);
+                        GetChangelogStatus.Run();
                     }
                     break;
                 case "add":
