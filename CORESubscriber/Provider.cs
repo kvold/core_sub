@@ -105,8 +105,10 @@ namespace CORESubscriber
                                OrderedChangelogDownloadUrl.Split('/')[
                                    OrderedChangelogDownloadUrl.Split('/').Length - 1];
 
-                using (var fs = new FileStream(fileName, FileMode.Create))
-                    result.Content.ReadAsStreamAsync().Result.CopyToAsync(fs);
+                using (var fs = new FileStream(fileName, FileMode.Create)){
+                    result.Content.CopyToAsync(fs);
+                }
+                
             }
         }
 
