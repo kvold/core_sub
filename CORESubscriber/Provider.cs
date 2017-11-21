@@ -15,7 +15,9 @@ namespace CORESubscriber
         {
             new XAttribute("nameSpace", ""),
             new XAttribute("subscriberLastindex", 0),
-            new XAttribute("wfsClient", "")
+            new XElement("abortedChangelog", new XAttribute("endIndex", ""), new XAttribute("transaction", ""), new XAttribute("changelogPath", ""), new XAttribute("changelogId", "")),
+            new XElement("wfsClient", ""),
+            new XElement("subscribed", bool.FalseString)
         };
 
         internal static readonly List<string> DatasetFields =
