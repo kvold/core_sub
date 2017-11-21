@@ -14,7 +14,7 @@ namespace CORESubscriber
         internal static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
-            new XAttribute("subscriberLastindex", 0),
+            new XAttribute("subscriberLastindex", -1),
             new XElement("abortedChangelog", new XAttribute("endIndex", ""), new XAttribute("transaction", ""), new XAttribute("changelogPath", ""), new XAttribute("changelogId", "")),
             new XElement("wfsClient", ""),
             new XElement("subscribed", bool.FalseString)
@@ -37,7 +37,7 @@ namespace CORESubscriber
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
-            var datasetsDocument = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(CreateDefaultProvider());
+            var datasetsDocument = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(new XComment("Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."), CreateDefaultProvider());
 
             AddDatasetsToDocument(datasetsList, datasetsDocument);
 
