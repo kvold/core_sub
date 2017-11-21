@@ -37,6 +37,8 @@ namespace CORESubscriber
 
         internal static long OrderedChangelogId { get; set; }
 
+        internal static string OrderedChangelogDownloadUrl { get; set; }
+
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
             var datasetsDocument = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(new XComment("Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."), CreateDefaultProvider());
@@ -50,7 +52,8 @@ namespace CORESubscriber
         {
             var datasetsDocument = ReadConfigFile();
 
-            datasetsDocument.Descendants("dataset").First(d => d.Attribute("datasetId").Value == DatasetId)
+            // ReSharper disable once PossibleNullReferenceException
+            datasetsDocument.Descendants("dataset").First(d => d.Attribute("datasetId")?.Value == DatasetId)
                 .Descendants("abortedChangelog").First().Attribute("changelogId").Value = OrderedChangelogId.ToString();
 
             datasetsDocument.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
