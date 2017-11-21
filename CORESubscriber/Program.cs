@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CORESubscriber.SoapAction;
 
 namespace CORESubscriber
@@ -26,7 +27,11 @@ namespace CORESubscriber
                 case "sync":
                     Provider.ConfigFile = args[1];
                     Provider.DatasetId = args[2];
-                    if (GetLastIndex.Run()) OrderChangelog.Run();
+                    if (GetLastIndex.Run())
+                    {
+                        OrderChangelog.Run();
+                        while (!GetChangelogStatus.Run()) Task.Delay(3000);
+                    }
                     break;
                 case "add":
                     Provider.ApiUrl = args[1];
