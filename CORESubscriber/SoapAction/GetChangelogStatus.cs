@@ -28,7 +28,7 @@ namespace CORESubscriber.SoapAction
                         Task.Delay(3000).Wait();
                         continue;
                     case "finished":
-                        break;
+                        return;
                     default:
                         throw new Exception("Status for changelog with ID " + Provider.OrderedChangelogId + ": " + returnValue);
                 }
