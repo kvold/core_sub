@@ -15,7 +15,7 @@ namespace CORESubscriber.SoapAction
 
             var responseContent = SoapRequest.Send(action, getChangelog);
 
-            var returnValue =  responseContent.Descendants(Config.GeosynchronizationNs + "downloadUri").First().Value;
+            var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "downloadUri").First().Value;
 
             return returnValue;
         }

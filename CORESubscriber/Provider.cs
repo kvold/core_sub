@@ -13,19 +13,20 @@ namespace CORESubscriber
     {
         internal static string ConfigFile;
 
-        internal static XDocument ConfigFileXml { get; set; }
-
         internal static readonly List<object> DatasetDefaults = new List<object>
         {
             new XAttribute("nameSpace", ""),
             new XAttribute("subscriberLastindex", -1),
-            new XElement("abortedChangelog", new XAttribute("endIndex", ""), new XAttribute("transaction", ""), new XAttribute("changelogPath", ""), new XAttribute("changelogId", "")),
+            new XElement("abortedChangelog", new XAttribute("endIndex", ""), new XAttribute("transaction", ""),
+                new XAttribute("changelogPath", ""), new XAttribute("changelogId", "")),
             new XElement("wfsClient", ""),
             new XElement("subscribed", bool.FalseString)
         };
 
         internal static readonly List<string> DatasetFields =
             new List<string> {"datasetId", "name", "version", "applicationSchema"};
+
+        internal static XDocument ConfigFileXml { get; set; }
 
         internal static string Password { get; set; }
 
@@ -45,7 +46,12 @@ namespace CORESubscriber
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
-            ConfigFileXml = File.Exists(ConfigFile) ? ReadConfigFile() : new XDocument(new XComment("Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."), CreateDefaultProvider());
+            ConfigFileXml = File.Exists(ConfigFile)
+                ? ReadConfigFile()
+                : new XDocument(
+                    new XComment(
+                        "Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."),
+                    CreateDefaultProvider());
 
             AddDatasetsToDocument(datasetsList, ConfigFileXml);
 
@@ -99,8 +105,8 @@ namespace CORESubscriber
                                OrderedChangelogDownloadUrl.Split('/')[
                                    OrderedChangelogDownloadUrl.Split('/').Length - 1];
 
-                using (var fs = new FileStream(fileName, FileMode.Create)) result.Content.ReadAsStreamAsync().Result.CopyToAsync(fs);
-
+                using (var fs = new FileStream(fileName, FileMode.Create))
+                    result.Content.ReadAsStreamAsync().Result.CopyToAsync(fs);
             }
         }
 

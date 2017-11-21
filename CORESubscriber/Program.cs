@@ -28,7 +28,9 @@ namespace CORESubscriber
                 case "sync":
                     Provider.ConfigFile = args[1];
                     Provider.ReadProviderSettings();
-                    foreach (var subscribed in Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed").Where( s => string.Equals(s.Value.ToString(), bool.TrueString, StringComparison.CurrentCultureIgnoreCase)))
+                    foreach (var subscribed in Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed")
+                        .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
+                            StringComparison.CurrentCultureIgnoreCase)))
                     {
                         Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
                         if (!GetLastIndex.Run()) continue;

@@ -11,11 +11,13 @@ namespace CORESubscriber.SoapAction
 
             var orderChangelog = SoapRequest.GetSoapContentByAction(action);
 
+            // ReSharper disable once PossibleNullReferenceException
             orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("startIndex").Value =
-                (Provider.SubscriberLastIndex +1).ToString();
+                (Provider.SubscriberLastIndex + 1).ToString();
 
             orderChangelog.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Provider.DatasetId;
 
+            // ReSharper disable once PossibleNullReferenceException
             orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("count").Value =
                 "1000";
 
