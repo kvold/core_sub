@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.IO;
+using System.Xml.Linq;
 
 namespace CORESubscriber
 {
@@ -10,5 +11,7 @@ namespace CORESubscriber
 
         internal static readonly XNamespace GeosynchronizationNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
+
+        internal static string DownloadFolder = Path.GetTempPath();
     }
 }

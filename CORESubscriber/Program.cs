@@ -31,6 +31,7 @@ namespace CORESubscriber
                         OrderChangelog.Run();
                         GetChangelogStatus.Run();
                         Provider.OrderedChangelogDownloadUrl = GetChangelog.Run();
+                        Provider.GetChangeLogZipFile();
                     }
                     break;
                 case "add":
