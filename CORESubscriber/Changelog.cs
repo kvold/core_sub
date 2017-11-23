@@ -8,6 +8,10 @@ namespace CORESubscriber
 {
     internal class Changelog
     {
+        internal static string ZipFile { get; set; }
+
+        internal static string Uuid { get; set; }
+
         internal static void GetZipFile()
         {
             using (var client = new HttpClient())
@@ -23,16 +27,23 @@ namespace CORESubscriber
                     throw new FileNotFoundException("Statuscode when trying to download from " +
                                                     Provider.OrderedChangelogDownloadUrl + " was " + result.StatusCode);
 
-                var fileName = Config.DownloadFolder + "/" +
-                               Provider.OrderedChangelogDownloadUrl.Split('/')[
-                                   Provider.OrderedChangelogDownloadUrl.Split('/').Length - 1];
+                Uuid = Provider.OrderedChangelogDownloadUrl.Split('/')[
+                    Provider.OrderedChangelogDownloadUrl.Split('/').Length - 1];
 
-                using (var fs = new FileStream(fileName, FileMode.Create))
+                ZipFile = Config.DownloadFolder + "/" + Uuid;
+
+                Uuid = Uuid.Replace(".zip", "");
+
+                using (var fs = new FileStream(ZipFile, FileMode.Create))
                 {
                     result.Content.CopyToAsync(fs);
                 }
-
             }
+        }
+
+        internal static void Unzip()
+        {
+            System.IO.Compression.ZipFile.ExtractToDirectory(ZipFile, Config.DownloadFolder);
         }
     }
 }
