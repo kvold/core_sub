@@ -12,7 +12,9 @@ namespace CORESubscriber
 
         internal static string Uuid { get; set; }
 
-        internal static void GetZipFile()
+        internal static string DownloadUrl { get; set; }
+
+        internal static void Get()
         {
             using (var client = new HttpClient())
             {
@@ -21,14 +23,13 @@ namespace CORESubscriber
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                var result = client.GetAsync(Provider.OrderedChangelogDownloadUrl).Result;
+                var result = client.GetAsync(DownloadUrl).Result;
 
                 if (!result.IsSuccessStatusCode)
                     throw new FileNotFoundException("Statuscode when trying to download from " +
-                                                    Provider.OrderedChangelogDownloadUrl + " was " + result.StatusCode);
+                                                    DownloadUrl + " was " + result.StatusCode);
 
-                Uuid = Provider.OrderedChangelogDownloadUrl.Split('/')[
-                    Provider.OrderedChangelogDownloadUrl.Split('/').Length - 1];
+                Uuid = DownloadUrl.Split('/')[DownloadUrl.Split('/').Length - 1];
 
                 ZipFile = Config.DownloadFolder + "/" + Uuid;
 

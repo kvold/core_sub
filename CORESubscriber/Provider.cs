@@ -40,8 +40,6 @@ namespace CORESubscriber
 
         internal static long OrderedChangelogId { get; set; }
 
-        internal static string OrderedChangelogDownloadUrl { get; set; }
-
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
             ConfigFileXml = File.Exists(ConfigFile)
