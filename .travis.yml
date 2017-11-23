@@ -1,7 +1,7 @@
 language: csharp
 solution: CORESubscriber.sln
 mono: none
-dotnet: 1.0.3
+dotnet: 2.0.3
 dist: trusty
 script:
  - dotnet restore
