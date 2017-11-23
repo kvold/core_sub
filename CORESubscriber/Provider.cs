@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Xml.Linq;
 
 namespace CORESubscriber
@@ -84,32 +82,6 @@ namespace CORESubscriber
             var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == DatasetId);
 
             SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("subscriberLastindex")?.Value);
-        }
-
-        internal static void GetChangeLogZipFile()
-        {
-            using (var client = new HttpClient())
-            {
-                var byteArray = Encoding.ASCII.GetBytes(User + ":" + Password);
-
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-                var result = client.GetAsync(OrderedChangelogDownloadUrl).Result;
-
-                if (!result.IsSuccessStatusCode)
-                    throw new FileNotFoundException("Statuscode when trying to download from " +
-                                                    OrderedChangelogDownloadUrl + " was " + result.StatusCode);
-
-                var fileName = Config.DownloadFolder + "/" +
-                               OrderedChangelogDownloadUrl.Split('/')[
-                                   OrderedChangelogDownloadUrl.Split('/').Length - 1];
-
-                using (var fs = new FileStream(fileName, FileMode.Create)){
-                    result.Content.CopyToAsync(fs);
-                }
-                
-            }
         }
 
         private static XDocument ReadConfigFile()
