@@ -79,12 +79,9 @@ namespace CORESubscriber
 
                 foreach (var transaction in changelogXml.Descendants(Config.ChangelogNs + "transactions"))
                 {
-                    var transactionElement = new XElement(Config.WfsXNamespace + "Transaction", new XAttribute("service", "WFS"),
-                        new XAttribute("version", "2.0.0"));
+                    transaction.Name = Config.WfsXNamespace + "Transaction";
 
-                    transactionElement.Add(transaction.Descendants());
-
-                    Send(new XDocument(transactionElement));
+                    Send(new XDocument(transaction));
                 }
             }
         }
@@ -93,9 +90,11 @@ namespace CORESubscriber
         {
             using (var client = new HttpClient())
             {
-                var httpContent = new StringContent(transactionDocument.ToString(), Encoding.UTF8, "application/xml");
+                var httpContent = new StringContent(transactionDocument.ToString(), Encoding.UTF8, Config.XmlMediaType);
 
-                client.PostAsync(WfsClient, httpContent);
+                var response = client.PostAsync(WfsClient, httpContent);
+
+                Console.WriteLine(response.Result.Content.ReadAsStringAsync().Result);
             }
         }
     }
