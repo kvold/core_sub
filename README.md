@@ -29,7 +29,7 @@ dotnet publish -r win10-x64
 ```
 dotnet publish -r ubuntu-x64
 ```
-### Mac
+#### Mac
 ```
 dotnet publish -r osx-x64
 ```
@@ -37,6 +37,9 @@ dotnet publish -r osx-x64
 ## Usage
 
 ### Adding datasets
+
+When adding a provider an xml-file will be created at ${providerSettings}.xml. If you don't give a filename as an argument, one will be created based on the title found in the capabilities-document.
+
 ```
 Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings}.xml
 ```
@@ -47,6 +50,9 @@ Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings
 * Populate the corresponding "wfsClient" element with the link to your WFS-service
 
 ### Synchronizing
+
+When synchronizing, the subscriber will download a zip-file containing the changelog. This will be saved and unzipped at ${tempFolder}. If a folder is not given as an argument, the subscriber will attempt to find a temp-folder to write to.
+
 ```
 Coresubscriber.exe sync ${providerSettings}.xml ${tempFolder}
 ```
