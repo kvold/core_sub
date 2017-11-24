@@ -15,10 +15,9 @@ namespace CORESubscriber.SoapAction
 
             var responseContent = SoapRequest.Send(action, getCapabilities);
 
-            var fileName = responseContent.Descendants(Config.OwsNs + "Title").First().Value
-                               .Replace(" ", "_") + ".xml";
-
-            Provider.ConfigFile = "Providers/" + fileName;
+            if (Provider.ConfigFile == null)
+                Provider.ConfigFile = responseContent.Descendants(Config.OwsNs + "Title").First().Value
+                                          .Replace(" ", "_") + ".xml";
 
             var datasetsList = GetDatasets(responseContent);
 

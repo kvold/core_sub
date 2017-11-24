@@ -10,8 +10,8 @@ namespace CORESubscriber
     {
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
         {
-            {"sync", new List<string> {"configFile"}},
-            {"add", new List<string> {"uri", "user", "password"}}
+            {"add", new List<string> {"uri", "user", "password", "outputFile"}},
+            {"sync", new List<string> {"configFile"}}
         };
 
 
@@ -44,6 +44,7 @@ namespace CORESubscriber
                     Provider.ApiUrl = args[1];
                     Provider.User = args[2];
                     Provider.Password = args[3];
+                    if(args.Count > 3) Provider.ConfigFile = args[4];
                     GetCapabilities.Run();
                     break;
                 default:
