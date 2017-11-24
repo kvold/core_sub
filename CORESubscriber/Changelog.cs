@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -17,6 +18,8 @@ namespace CORESubscriber
         internal static string DownloadUrl { get; set; }
 
         internal static string DataFolder { get; set; }
+
+        internal static string WfsClient { get; set; }
 
         internal static void Get()
         {
@@ -55,15 +58,19 @@ namespace CORESubscriber
             DataFolder = Config.DownloadFolder + Uuid;
         }
 
-        internal static void Send()
+        internal static void Execute()
         {
+            WfsClient = Provider.ConfigFileXml.Descendants().First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId).Descendants("wfsClient").First().Value;
+
+            if(WfsClient == "") throw new Exception("No wfsClient given for dataset " + Provider.DatasetId);
+
             var directoryInfo = new DirectoryInfo(DataFolder);
 
             foreach (var directory in directoryInfo.GetDirectories()) ReadFiles(directory.GetFiles());
 
             ReadFiles(directoryInfo.GetFiles());
         }
-
+        
         private static void ReadFiles(IEnumerable<FileInfo> files)
         {
             foreach (var fileInfo in files)
@@ -76,7 +83,19 @@ namespace CORESubscriber
                         new XAttribute("version", "2.0.0"));
 
                     transactionElement.Add(transaction.Descendants());
+
+                    Send(new XDocument(transactionElement));
                 }
+            }
+        }
+
+        private static void Send(XNode transactionDocument)
+        {
+            using (var client = new HttpClient())
+            {
+                var httpContent = new StringContent(transactionDocument.ToString(), Encoding.UTF8, "application/xml");
+
+                client.PostAsync(WfsClient, httpContent);
             }
         }
     }
