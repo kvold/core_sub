@@ -33,9 +33,9 @@ dotnet publish -r osx-x64
 
 ### Adding datasets
 ```
-Coresubscriber.exe add ${providerurl} ${username} ${password}
+Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings}.xml
 ```
 ### Synchronizing
 ```
-Coresubscriber.exe sync ${providerSettings.xml}
+Coresubscriber.exe sync ${providerSettings}.xml
 ```
