@@ -1,4 +1,4 @@
-![alt text](https://travis-ci.org/jarped/CORESubscriber.svg?branch=master)
+[![Build Status](https://travis-ci.org/jarped/CORESubscriber.svg?branch=master)](https://travis-ci.org/jarped/CORESubscriber)
 
 # CORESubscriber
 
