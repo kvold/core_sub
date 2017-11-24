@@ -15,13 +15,13 @@ namespace CORESubscriber.SoapAction
                 var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
 
                 getChangelogStatus.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
-                    Provider.OrderedChangelogId.ToString();
+                    Dataset.OrderedChangelogId.ToString();
 
                 var responseContent = SoapRequest.Send(action, getChangelogStatus);
 
                 var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "return").First().Value;
 
-                Console.WriteLine("Status for changelog with ID " + Provider.OrderedChangelogId + ": " + returnValue);
+                Console.WriteLine("Status for changelog with ID " + Dataset.OrderedChangelogId + ": " + returnValue);
 
                 switch (returnValue)
                 {
@@ -31,7 +31,7 @@ namespace CORESubscriber.SoapAction
                     case "finished":
                         return;
                     default:
-                        throw new Exception("Status for changelog with ID " + Provider.OrderedChangelogId + ": " +
+                        throw new Exception("Status for changelog with ID " + Dataset.OrderedChangelogId + ": " +
                                             returnValue);
                 }
             }
