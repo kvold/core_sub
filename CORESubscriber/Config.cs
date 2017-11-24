@@ -15,7 +15,7 @@ namespace CORESubscriber
         internal static readonly XNamespace ChangelogNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
 
-        internal static readonly XNamespace WfsXNamespace = "http://www.opengis.net/wfs/2.0";
+        internal static readonly XNamespace WfsNs = "http://www.opengis.net/wfs/2.0";
 
         internal static string DownloadFolder = Path.GetTempPath();
     }

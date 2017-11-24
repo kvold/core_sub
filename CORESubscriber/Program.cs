@@ -36,8 +36,7 @@ namespace CORESubscriber
                         if (!GetLastIndex.Run()) continue;
                         OrderChangelog.Run();
                         GetChangelogStatus.Run();
-                        Changelog.DownloadUrl = GetChangelog.Run();
-                        Changelog.Get();
+                        Changelog.Get(GetChangelog.Run());
                         Changelog.Execute();
                     }
                     break;

@@ -27,8 +27,10 @@ namespace CORESubscriber.SoapAction
                 Convert.ToInt64(responseContent.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value);
 
             // ReSharper disable once PossibleNullReferenceException
-            Provider.ConfigFileXml.Descendants("dataset").First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId)
-                .Descendants("abortedChangelog").First().Attribute("changelogId").Value = Provider.OrderedChangelogId.ToString();
+            Provider.ConfigFileXml.Descendants("dataset")
+                    .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId)
+                    .Descendants("abortedChangelog").First().Attribute("changelogId").Value =
+                Provider.OrderedChangelogId.ToString();
 
             Provider.Save();
         }

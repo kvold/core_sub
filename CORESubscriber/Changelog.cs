@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -12,18 +13,16 @@ namespace CORESubscriber
 {
     internal class Changelog
     {
-        internal static string ZipFile { get; set; }
+        private static string DataFolder { get; set; }
 
-        internal static string Uuid { get; set; }
+        private static string WfsClient { get; set; }
 
-        internal static string DownloadUrl { get; set; }
-
-        internal static string DataFolder { get; set; }
-
-        internal static string WfsClient { get; set; }
-
-        internal static void Get()
+        internal static void Get(string downloadUrl)
         {
+            string uuid;
+
+            string zipFile;
+
             using (var client = new HttpClient())
             {
                 var byteArray = Encoding.ASCII.GetBytes(Provider.User + ":" + Provider.Password);
@@ -31,39 +30,41 @@ namespace CORESubscriber
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                var result = client.GetAsync(DownloadUrl).Result;
+                var result = client.GetAsync(downloadUrl).Result;
 
                 if (!result.IsSuccessStatusCode)
                     throw new FileNotFoundException("Statuscode when trying to download from " +
-                                                    DownloadUrl + " was " + result.StatusCode);
+                                                    downloadUrl + " was " + result.StatusCode);
 
-                Uuid = DownloadUrl.Split('/')[DownloadUrl.Split('/').Length - 1];
+                uuid = downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
 
-                ZipFile = Config.DownloadFolder + Uuid;
+                zipFile = Config.DownloadFolder + uuid;
 
-                Uuid = Uuid.Replace(".zip", "");
+                uuid = uuid.Replace(".zip", "");
 
-                using (var fs = new FileStream(ZipFile, FileMode.Create))
+                using (var fs = new FileStream(zipFile, FileMode.Create))
                 {
                     result.Content.CopyToAsync(fs);
                 }
             }
 
-            Unzip();
+            Unzip(uuid, zipFile);
         }
 
-        internal static void Unzip()
+        internal static void Unzip(string uuid, string zipFile)
         {
-            System.IO.Compression.ZipFile.ExtractToDirectory(ZipFile, Config.DownloadFolder);
+            ZipFile.ExtractToDirectory(zipFile, Config.DownloadFolder);
 
-            DataFolder = Config.DownloadFolder + Uuid;
+            DataFolder = Config.DownloadFolder + uuid;
         }
 
         internal static void Execute()
         {
-            WfsClient = Provider.ConfigFileXml.Descendants().First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId).Descendants("wfsClient").First().Value;
+            WfsClient = Provider.ConfigFileXml.Descendants()
+                .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId).Descendants("wfsClient").First()
+                .Value;
 
-            if(WfsClient == "") throw new Exception("No wfsClient given for dataset " + Provider.DatasetId);
+            if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Provider.DatasetId);
 
             var directoryInfo = new DirectoryInfo(DataFolder);
 
@@ -71,7 +72,7 @@ namespace CORESubscriber
 
             ReadFiles(directoryInfo.GetFiles());
         }
-        
+
         private static void ReadFiles(IEnumerable<FileInfo> files)
         {
             foreach (var fileInfo in files)
@@ -80,7 +81,7 @@ namespace CORESubscriber
 
                 foreach (var transaction in changelogXml.Descendants(Config.ChangelogNs + "transactions"))
                 {
-                    transaction.Name = Config.WfsXNamespace + "Transaction";
+                    transaction.Name = Config.WfsNs + "Transaction";
 
                     Send(new XDocument(transaction));
                 }
@@ -102,10 +103,12 @@ namespace CORESubscriber
 
                     Console.WriteLine(errorMessage);
 
-                    throw new TransactionAbortedException("Transaction failed. Message from WFS-server: \r\n" + errorMessage);
+                    throw new TransactionAbortedException("Transaction failed. Message from WFS-server: \r\n" +
+                                                          errorMessage);
                 }
 
-                Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result).Descendants(Config.WfsXNamespace + "TransactionSummary").First().ToString());
+                Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result)
+                    .Descendants(Config.WfsNs + "TransactionSummary").First().ToString());
             }
         }
 
