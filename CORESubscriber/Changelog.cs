@@ -38,9 +38,11 @@ namespace CORESubscriber
 
                 uuid = downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
 
-                zipFile = Config.DownloadFolder + uuid;
+                zipFile = Config.DownloadFolder + "/" + uuid;
 
-                uuid = uuid.Replace(".zip", "");
+                uuid = uuid.Split(".")[0];
+
+                DataFolder = Config.DownloadFolder + "/" + uuid;
 
                 using (var fs = new FileStream(zipFile, FileMode.Create))
                 {
@@ -54,8 +56,6 @@ namespace CORESubscriber
         internal static void Unzip(string uuid, string zipFile)
         {
             ZipFile.ExtractToDirectory(zipFile, Config.DownloadFolder);
-
-            DataFolder = Config.DownloadFolder + uuid;
         }
 
         internal static void Execute()
