@@ -26,7 +26,7 @@ namespace CORESubscriber
 
         private static void Run(IReadOnlyList<string> args)
         {
-            switch (args[0])
+            switch (args[0].ToLower())
             {
                 case "sync":
 
