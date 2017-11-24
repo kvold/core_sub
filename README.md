@@ -23,15 +23,15 @@ See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-ri
 
 #### Windows 10 64bit
 ```
-dotnet publish -c Release -r win10-x64
+dotnet publish -c Release --self-contained -r win10-x64
 ```
 #### Ubuntu
 ```
-dotnet publish -c Release -r ubuntu-x64
+dotnet publish -c Release --self-contained -r ubuntu-x64
 ```
 #### Mac
 ```
-dotnet publish -c Release -r osx-x64
+dotnet publish -c Release --self-contained -r osx-x64
 ```
 
 ## Usage
