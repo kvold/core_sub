@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Xml.Linq;
 
 namespace CORESubscriber
 {
@@ -51,6 +53,31 @@ namespace CORESubscriber
             System.IO.Compression.ZipFile.ExtractToDirectory(ZipFile, Config.DownloadFolder);
 
             DataFolder = Config.DownloadFolder + Uuid;
+        }
+
+        internal static void Send()
+        {
+            var directoryInfo = new DirectoryInfo(DataFolder);
+
+            foreach (var directory in directoryInfo.GetDirectories()) ReadFiles(directory.GetFiles());
+
+            ReadFiles(directoryInfo.GetFiles());
+        }
+
+        private static void ReadFiles(IEnumerable<FileInfo> files)
+        {
+            foreach (var fileInfo in files)
+            {
+                var changelogXml = XDocument.Parse(fileInfo.OpenText().ReadToEnd());
+
+                foreach (var transaction in changelogXml.Descendants(Config.ChangelogNs + "transactions"))
+                {
+                    var transactionElement = new XElement(Config.WfsXNamespace + "Transaction", new XAttribute("service", "WFS"),
+                        new XAttribute("version", "2.0.0"));
+
+                    transactionElement.Add(transaction.Descendants());
+                }
+            }
         }
     }
 }
