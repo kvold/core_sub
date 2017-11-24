@@ -32,20 +32,19 @@ namespace CORESubscriber.SoapAction
         {
             var datasetsList = new List<XElement>();
 
-            foreach (var dataset in result.Descendants(Config.GeosynchronizationNs + "datasets")
-                .Descendants())
+            foreach (var dataset in result.Descendants(Config.GeosynchronizationNs + "datasets").Descendants())
             {
                 var datasetElement = new XElement("dataset");
-
-                datasetElement.Add(Provider.DatasetDefaults);
-
+                
                 foreach (var field in dataset.Descendants()
                     .Where(d => Provider.DatasetFields.Contains(d.Name.LocalName)))
                 {
                     datasetElement.Add(new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim()));
                 }
 
-                if (datasetElement.Attributes().Count() == Provider.DatasetDefaults.Count) continue;
+                if (!datasetElement.Attributes().Any()) continue;
+
+                datasetElement.Add(Provider.DatasetDefaults);
 
                 datasetsList.Add(datasetElement);
             }
