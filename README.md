@@ -6,6 +6,12 @@ Lightweight console-subscriber for Geosynchronization written in .NET Core.
 
 ## Build
 
+Make sure you have .NET Core installed:
+
+https://www.microsoft.com/net/core
+
+Clone and restore:
+
 ```
 git clone https://github.com/jarped/CORESubscriber.git
 cd CORESubscriber/CORESubscriber
