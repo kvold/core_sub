@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using CORESubscriber.SoapAction;
@@ -17,11 +18,29 @@ namespace CORESubscriber
 
         private static void Main(string[] args)
         {
-            if (args.Length > 0)
-                Run(args);
+            try
+            {
+                if (args.Length > 0)
+                    Run(args);
 
-            else
-                WriteHelp();
+                else
+                    WriteHelp();
+            }
+            catch (Exception e)
+            {
+                HandleExceptionText(e);
+            }
+        }
+
+        private static void HandleExceptionText(Exception e)
+        {
+            Console.WriteLine(e.Message);
+
+            const string errorLog = "errorLog.txt";
+
+            using (var file = File.Exists(errorLog) ? File.Open(errorLog, FileMode.Append) : File.Open(errorLog, FileMode.CreateNew))
+                using (var stream = new StreamWriter(file))
+                    stream.WriteLine(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz") + ":\r\n\t" + e.Message + ":\r\n" + e.StackTrace);
         }
 
         private static void Run(IReadOnlyList<string> args)

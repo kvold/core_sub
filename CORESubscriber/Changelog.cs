@@ -101,8 +101,6 @@ namespace CORESubscriber
                 {
                     var errorMessage = response.Result.Content.ReadAsStringAsync().Result;
 
-                    Console.WriteLine(errorMessage);
-
                     throw new TransactionAbortedException("Transaction failed. Message from WFS-server: \r\n" +
                                                           errorMessage);
                 }

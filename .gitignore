@@ -262,3 +262,6 @@ __pycache__/
 
 # Folder for Settings
 /CORESubscriber/Providers/
+
+# Errorlog
+/CORESubscriber/errorLog.txt
