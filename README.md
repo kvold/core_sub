@@ -40,6 +40,12 @@ dotnet publish -r osx-x64
 ```
 Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings}.xml
 ```
+### Editing providerSettings
+
+* Open ${providerSettings}.xml in your favourite text-editor (hopefully one that handles xml well)
+* Set the "subscribed" element of datasets that you wish to activate to "True"
+* Populate the corresponding "wfsClient" element with the link to your WFS-service
+
 ### Synchronizing
 ```
 Coresubscriber.exe sync ${providerSettings}.xml ${tempFolder}
