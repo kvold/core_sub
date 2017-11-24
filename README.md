@@ -37,5 +37,5 @@ Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings
 ```
 ### Synchronizing
 ```
-Coresubscriber.exe sync ${providerSettings}.xml
+Coresubscriber.exe sync ${providerSettings}.xml ${tempFolder}
 ```
