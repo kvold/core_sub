@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Transactions;
 using System.Xml.Linq;
 
 namespace CORESubscriber
@@ -84,6 +85,7 @@ namespace CORESubscriber
                     Send(new XDocument(transaction));
                 }
             }
+            UpdateProviderSettings();
         }
 
         private static void Send(XNode transactionDocument)
@@ -94,8 +96,29 @@ namespace CORESubscriber
 
                 var response = client.PostAsync(WfsClient, httpContent);
 
-                Console.WriteLine(response.Result.Content.ReadAsStringAsync().Result);
+                if (!response.Result.IsSuccessStatusCode)
+                {
+                    var errorMessage = response.Result.Content.ReadAsStringAsync().Result;
+
+                    Console.WriteLine(errorMessage);
+
+                    throw new TransactionAbortedException("Transaction failed. Message from WFS-server: \r\n" + errorMessage);
+                }
+
+                Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result).Descendants(Config.WfsXNamespace + "TransactionSummary").First().ToString());
             }
+        }
+
+        private static void UpdateProviderSettings()
+        {
+            Provider.OrderedChangelogId = -1;
+
+            // ReSharper disable once PossibleNullReferenceException
+            Provider.ConfigFileXml.Descendants()
+                .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId)
+                .Attribute("subscriberLastindex").Value = Provider.ProviderLastIndex.ToString();
+
+            Provider.Save();
         }
     }
 }

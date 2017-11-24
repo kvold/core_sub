@@ -40,6 +40,8 @@ namespace CORESubscriber
 
         internal static long OrderedChangelogId { get; set; }
 
+        internal static long ProviderLastIndex { get; set; }
+
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
             ConfigFileXml = File.Exists(ConfigFile)
@@ -51,18 +53,15 @@ namespace CORESubscriber
 
             AddDatasetsToDocument(datasetsList, ConfigFileXml);
 
-            ConfigFileXml.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
+            Save();
         }
 
         internal static void Save()
         {
-            ConfigFileXml = ReadConfigFile();
-
-            // ReSharper disable once PossibleNullReferenceException
-            ConfigFileXml.Descendants("dataset").First(d => d.Attribute("datasetId")?.Value == DatasetId)
-                .Descendants("abortedChangelog").First().Attribute("changelogId").Value = OrderedChangelogId.ToString();
-
-            ConfigFileXml.Save(new FileStream(ConfigFile, FileMode.OpenOrCreate));
+            using (var fileStream = new FileStream(ConfigFile, FileMode.OpenOrCreate))
+            {
+                ConfigFileXml.Save(fileStream);
+            }
         }
 
         internal static void ReadProviderSettings()
