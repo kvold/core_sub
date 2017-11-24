@@ -23,10 +23,12 @@ namespace CORESubscriber.SoapAction
 
             Provider.Save(datasetsList);
 
+            Console.WriteLine("Saved " + datasetsList.Count + " datasets to " + Provider.ConfigFile);
+
             return true;
         }
 
-        private static IEnumerable<XElement> GetDatasets(XContainer result)
+        private static IList<XElement> GetDatasets(XContainer result)
         {
             var datasetsList = new List<XElement>();
 
@@ -41,8 +43,6 @@ namespace CORESubscriber.SoapAction
                     .Where(d => Provider.DatasetFields.Contains(d.Name.LocalName)))
                 {
                     datasetElement.Add(new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim()));
-
-                    Console.WriteLine(field.Name.LocalName + ": " + field.Value.Trim());
                 }
 
                 if (datasetElement.Attributes().Count() == Provider.DatasetDefaults.Count) continue;
