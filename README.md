@@ -1,3 +1,5 @@
+![alt text](https://travis-ci.org/jarped/CORESubscriber.svg?branch=master)
+
 # CORESubscriber
 
 Lightweight console-subscriber for Geosynchronization written in .NET Core.
