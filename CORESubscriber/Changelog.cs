@@ -14,6 +14,8 @@ namespace CORESubscriber
 
         internal static string DownloadUrl { get; set; }
 
+        internal static string DataFolder { get; set; }
+
         internal static void Get()
         {
             using (var client = new HttpClient())
@@ -31,7 +33,7 @@ namespace CORESubscriber
 
                 Uuid = DownloadUrl.Split('/')[DownloadUrl.Split('/').Length - 1];
 
-                ZipFile = Config.DownloadFolder + "/" + Uuid;
+                ZipFile = Config.DownloadFolder + Uuid;
 
                 Uuid = Uuid.Replace(".zip", "");
 
@@ -40,11 +42,15 @@ namespace CORESubscriber
                     result.Content.CopyToAsync(fs);
                 }
             }
+
+            Unzip();
         }
 
         internal static void Unzip()
         {
             System.IO.Compression.ZipFile.ExtractToDirectory(ZipFile, Config.DownloadFolder);
+
+            DataFolder = Config.DownloadFolder + Uuid;
         }
     }
 }

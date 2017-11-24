@@ -38,7 +38,6 @@ namespace CORESubscriber
                         GetChangelogStatus.Run();
                         Changelog.DownloadUrl = GetChangelog.Run();
                         Changelog.Get();
-                        Changelog.Unzip();
                     }
                     break;
                 case "add":
