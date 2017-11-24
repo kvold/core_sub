@@ -36,9 +36,7 @@ namespace CORESubscriber
         {
             Console.WriteLine(e.Message);
 
-            const string errorLog = "errorLog.txt";
-
-            using (var file = File.Exists(errorLog) ? File.Open(errorLog, FileMode.Append) : File.Open(errorLog, FileMode.CreateNew))
+            using (var file = File.Exists(Config.ErrorLog) ? File.Open(Config.ErrorLog, FileMode.Append) : File.Open(Config.ErrorLog, FileMode.CreateNew))
                 using (var stream = new StreamWriter(file))
                     stream.WriteLine(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz") + ":\r\n\t" + e.Message + ":\r\n" + e.StackTrace);
         }

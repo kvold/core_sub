@@ -18,5 +18,7 @@ namespace CORESubscriber
         internal static readonly XNamespace WfsNs = "http://www.opengis.net/wfs/2.0";
 
         internal static string DownloadFolder = Path.GetTempPath();
+
+        internal static string ErrorLog = "errorLog.txt";
     }
 }
