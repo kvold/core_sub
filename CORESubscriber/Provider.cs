@@ -75,10 +75,6 @@ namespace CORESubscriber
             User = provider.Attribute("user")?.Value;
 
             ApiUrl = provider.Attribute("uri")?.Value;
-
-            var dataset = provider.Descendants().First(d => d.Attribute("datasetId")?.Value == DatasetId);
-
-            SubscriberLastIndex = Convert.ToInt64(dataset.Attribute("subscriberLastindex")?.Value);
         }
 
         private static XDocument ReadConfigFile()

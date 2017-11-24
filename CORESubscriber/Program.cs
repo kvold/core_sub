@@ -34,6 +34,7 @@ namespace CORESubscriber
                             StringComparison.CurrentCultureIgnoreCase)))
                     {
                         Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
+                        Provider.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
                         if (!GetLastIndex.Run()) continue;
                         OrderChangelog.Run();
                         GetChangelogStatus.Run();
