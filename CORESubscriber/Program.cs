@@ -11,7 +11,7 @@ namespace CORESubscriber
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
         {
             {"add", new List<string> {"uri", "user", "password", "outputFile"}},
-            {"sync", new List<string> {"configFile"}}
+            {"sync", new List<string> {"configFile", "tempFolder"}}
         };
 
 
@@ -27,6 +27,7 @@ namespace CORESubscriber
             {
                 case "sync":
                     Provider.ConfigFile = args[1];
+                    Config.DownloadFolder = args[2];
                     Provider.ReadProviderSettings();
                     foreach (var subscribed in Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed")
                         .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
