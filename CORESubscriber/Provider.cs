@@ -64,7 +64,7 @@ namespace CORESubscriber
             }
         }
 
-        internal static void ReadProviderSettings()
+        internal static void ReadSettings()
         {
             ConfigFileXml = ReadConfigFile();
 

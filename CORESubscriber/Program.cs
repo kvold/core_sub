@@ -17,51 +17,103 @@ namespace CORESubscriber
 
         private static void Main(string[] args)
         {
-            if (args.Length > 0) RunAction(args);
-            else WriteHelp();
+            if (args.Length > 0)
+                Run(args);
+
+            else
+                WriteHelp();
         }
 
-        private static void RunAction(IReadOnlyList<string> args)
+        private static void Run(IReadOnlyList<string> args)
         {
             switch (args[0])
             {
                 case "sync":
-                    Provider.ConfigFile = args[1];
-                    Config.DownloadFolder = args[2];
-                    Provider.ReadProviderSettings();
-                    foreach (var subscribed in Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed")
-                        .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
-                            StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
-                        Provider.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
-                        if (!GetLastIndex.Run()) continue;
-                        OrderChangelog.Run();
-                        GetChangelogStatus.Run();
-                        Changelog.Get(GetChangelog.Run());
-                        Changelog.Execute();
-                    }
+
+                    SetSyncVariables(args);
+
+                    SynchronzeSubscribedDatasets();
+
                     break;
+
                 case "add":
-                    Provider.ApiUrl = args[1];
-                    Provider.User = args[2];
-                    Provider.Password = args[3];
-                    if(args.Count > 3) Provider.ConfigFile = args[4];
+
+                    SetAddVariables(args);
+
                     GetCapabilities.Run();
+
                     break;
+
                 default:
+
                     WriteHelp();
+
                     break;
             }
+        }
+
+        private static void SetSyncVariables(IReadOnlyList<string> args)
+        {
+            Provider.ConfigFile = args[1];
+
+            if (args.Count > 1) Config.DownloadFolder = args[2];
+
+            Provider.ReadSettings();
+        }
+
+        private static void SetAddVariables(IReadOnlyList<string> args)
+        {
+            Provider.ApiUrl = args[1];
+
+            Provider.User = args[2];
+
+            Provider.Password = args[3];
+
+            if (args.Count > 3) Provider.ConfigFile = args[4];
+        }
+
+        private static void SynchronzeSubscribedDatasets()
+        {
+            foreach (var subscribed in GetSubscribedElements())
+            {
+                SetDatasetVariables(subscribed);
+
+                if (!GetLastIndex.Run()) continue;
+
+                OrderChangelog.Run();
+
+                GetChangelogStatus.Run();
+
+                Changelog.Get(GetChangelog.Run());
+
+                Changelog.Execute();
+            }
+        }
+
+        private static void SetDatasetVariables(XObject subscribed)
+        {
+            Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
+
+            Provider.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
+        }
+
+        private static IEnumerable<XElement> GetSubscribedElements()
+        {
+            return Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed")
+                .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
+                    StringComparison.CurrentCultureIgnoreCase));
         }
 
         private static void WriteHelp()
         {
             Console.WriteLine("Syntax: action [parameters]");
+
             Console.WriteLine();
+
             foreach (var action in Actions)
             {
                 Console.WriteLine(action.Key + ":");
+
                 foreach (var parameter in action.Value) Console.WriteLine("\t" + parameter);
             }
         }
