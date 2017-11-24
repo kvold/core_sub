@@ -37,14 +37,14 @@ namespace CORESubscriber.SoapAction
                 var datasetElement = new XElement("dataset");
                 
                 foreach (var field in dataset.Descendants()
-                    .Where(d => Provider.DatasetFields.Contains(d.Name.LocalName)))
+                    .Where(d => Dataset.Fields.Contains(d.Name.LocalName)))
                 {
                     datasetElement.Add(new XAttribute(field.Name.LocalName.Trim(), field.Value.Trim()));
                 }
 
                 if (!datasetElement.Attributes().Any()) continue;
 
-                datasetElement.Add(Provider.DatasetDefaults);
+                datasetElement.Add(Dataset.DefaultElements);
 
                 datasetsList.Add(datasetElement);
             }

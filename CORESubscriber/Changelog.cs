@@ -61,10 +61,10 @@ namespace CORESubscriber
         internal static void Execute()
         {
             WfsClient = Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId).Descendants("wfsClient").First()
+                .First(d => d.Attribute("datasetId")?.Value == Dataset.Id).Descendants("wfsClient").First()
                 .Value;
 
-            if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Provider.DatasetId);
+            if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Dataset.Id);
 
             var directoryInfo = new DirectoryInfo(DataFolder);
 
@@ -114,12 +114,12 @@ namespace CORESubscriber
 
         private static void UpdateProviderSettings()
         {
-            Provider.OrderedChangelogId = -1;
+            Dataset.OrderedChangelogId = -1;
 
             // ReSharper disable once PossibleNullReferenceException
             Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId)
-                .Attribute("subscriberLastindex").Value = Provider.ProviderLastIndex.ToString();
+                .First(d => d.Attribute("datasetId")?.Value == Dataset.Id)
+                .Attribute("subscriberLastindex").Value = Dataset.ProviderLastIndex.ToString();
 
             Provider.Save();
         }

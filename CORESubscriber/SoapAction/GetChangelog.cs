@@ -11,7 +11,7 @@ namespace CORESubscriber.SoapAction
             var getChangelog = SoapRequest.GetSoapContentByAction(action);
 
             getChangelog.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
-                Provider.OrderedChangelogId.ToString();
+                Dataset.OrderedChangelogId.ToString();
 
             var responseContent = SoapRequest.Send(action, getChangelog);
 

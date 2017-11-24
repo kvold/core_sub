@@ -11,19 +11,6 @@ namespace CORESubscriber
     {
         internal static string ConfigFile;
 
-        internal static readonly List<object> DatasetDefaults = new List<object>
-        {
-            new XAttribute("nameSpace", ""),
-            new XAttribute("subscriberLastindex", -1),
-            new XElement("abortedChangelog", new XAttribute("endIndex", ""), new XAttribute("transaction", ""),
-                new XAttribute("changelogPath", ""), new XAttribute("changelogId", "")),
-            new XElement("wfsClient", ""),
-            new XElement("subscribed", bool.FalseString)
-        };
-
-        internal static readonly List<string> DatasetFields =
-            new List<string> {"datasetId", "name", "version", "applicationSchema"};
-
         internal static XDocument ConfigFileXml { get; set; }
 
         internal static string Password { get; set; }
@@ -32,15 +19,6 @@ namespace CORESubscriber
 
         internal static string ApiUrl { get; set; }
 
-        internal static string DatasetId { get; set; }
-
-        internal static string ApplicationSchema { get; set; }
-
-        internal static long SubscriberLastIndex { get; set; }
-
-        internal static long OrderedChangelogId { get; set; }
-
-        internal static long ProviderLastIndex { get; set; }
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
@@ -87,7 +65,7 @@ namespace CORESubscriber
             foreach (var xElement in datasetsList)
             {
                 if (datasetsDocument.Descendants("provider").Descendants().Any(d =>
-                    DatasetFields.All(f =>
+                    Dataset.Fields.All(f =>
                         d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
                 ))
                     continue;

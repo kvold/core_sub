@@ -13,9 +13,9 @@ namespace CORESubscriber.SoapAction
 
             // ReSharper disable once PossibleNullReferenceException
             orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("startIndex").Value =
-                (Provider.SubscriberLastIndex + 1).ToString();
+                (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Provider.DatasetId;
+            orderChangelog.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Dataset.Id;
 
             // ReSharper disable once PossibleNullReferenceException
             orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("count").Value =
@@ -23,14 +23,14 @@ namespace CORESubscriber.SoapAction
 
             var responseContent = SoapRequest.Send(action, orderChangelog);
 
-            Provider.OrderedChangelogId =
+            Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value);
 
             // ReSharper disable once PossibleNullReferenceException
             Provider.ConfigFileXml.Descendants("dataset")
-                    .First(d => d.Attribute("datasetId")?.Value == Provider.DatasetId)
+                    .First(d => d.Attribute("datasetId")?.Value == Dataset.Id)
                     .Descendants("abortedChangelog").First().Attribute("changelogId").Value =
-                Provider.OrderedChangelogId.ToString();
+                Dataset.OrderedChangelogId.ToString();
 
             Provider.Save();
         }

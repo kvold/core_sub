@@ -92,9 +92,9 @@ namespace CORESubscriber
 
         private static void SetDatasetVariables(XObject subscribed)
         {
-            Provider.DatasetId = subscribed.Parent?.Attribute("datasetId")?.Value;
+            Dataset.Id = subscribed.Parent?.Attribute("datasetId")?.Value;
 
-            Provider.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
+            Dataset.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
         }
 
         private static IEnumerable<XElement> GetSubscribedElements()
