@@ -10,12 +10,11 @@ Make sure you have .NET Core installed:
 
 https://www.microsoft.com/net/core
 
-Clone and restore:
+### Clone:
 
 ```
 git clone https://github.com/jarped/CORESubscriber.git
 cd CORESubscriber/CORESubscriber
-dotnet restore
 ```
 
 ### Publish
