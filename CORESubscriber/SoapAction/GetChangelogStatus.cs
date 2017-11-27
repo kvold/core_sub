@@ -8,20 +8,24 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
+            const string action = "GetChangelogStatus";
+
+            var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
+
+            getChangelogStatus.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
+                Dataset.OrderedChangelogId.ToString();
+
+            var queryCounter = 0;
+
             while (true)
             {
-                const string action = "GetChangelogStatus";
-
-                var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
-
-                getChangelogStatus.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
-                    Dataset.OrderedChangelogId.ToString();
+                queryCounter++;
 
                 var responseContent = SoapRequest.Send(action, getChangelogStatus);
 
                 var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "return").First().Value;
 
-                Console.WriteLine("Status for changelog with ID " + Dataset.OrderedChangelogId + ": " + returnValue);
+                Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId + " is " + returnValue);
 
                 switch (returnValue)
                 {
