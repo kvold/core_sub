@@ -6,33 +6,33 @@ Lightweight console-subscriber for Geosynchronization written in .NET Core.
 
 ## Build
 
-Make sure you have .NET Core installed:
+Make sure you have .NET Core installed (for build/publish, not needed to run):
 
 https://www.microsoft.com/net/core
 
-### Clone:
-
-```
-git clone https://github.com/jarped/CORESubscriber.git
-cd CORESubscriber/CORESubscriber
-```
 
 ### Publish
 
-See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-rids for RID
+See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-rids for RID (bold in examples)
 
 #### Windows 10 64bit
-```
-dotnet publish -c Release --self-contained -r win10-x64
-```
+<pre>
+git clone https://github.com/jarped/CORESubscriber.git
+cd CORESubscriber/CORESubscriber
+dotnet publish -c Release --self-contained -r <b>win10-x64</b>
+</pre>
 #### Ubuntu
-```
-dotnet publish -c Release --self-contained -r ubuntu-x64
-```
+<pre>
+git clone https://github.com/jarped/CORESubscriber.git
+cd CORESubscriber/CORESubscriber
+dotnet publish -c Release --self-contained -r <b>ubuntu-x64</b>
+</pre>
 #### Mac
-```
-dotnet publish -c Release --self-contained -r osx-x64
-```
+<pre>
+git clone https://github.com/jarped/CORESubscriber.git
+cd CORESubscriber/CORESubscriber
+dotnet publish -c Release --self-contained -r <b>osx-x64</b>
+</pre>
 
 ## Usage
 
