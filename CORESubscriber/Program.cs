@@ -104,6 +104,8 @@ namespace CORESubscriber
                 Changelog.Get(GetChangelog.Run());
 
                 Changelog.Execute();
+
+                Dataset.UpdateSettings();
             }
         }
 

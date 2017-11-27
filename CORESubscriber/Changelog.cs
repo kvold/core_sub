@@ -86,7 +86,6 @@ namespace CORESubscriber
                     Send(new XDocument(transaction));
                 }
             }
-            UpdateProviderSettings();
         }
 
         private static void Send(XNode transactionDocument)
@@ -108,18 +107,6 @@ namespace CORESubscriber
                 Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result)
                     .Descendants(Config.WfsNs + "TransactionSummary").First().ToString());
             }
-        }
-
-        private static void UpdateProviderSettings()
-        {
-            Dataset.OrderedChangelogId = -1;
-
-            // ReSharper disable once PossibleNullReferenceException
-            Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute("datasetId")?.Value == Dataset.Id)
-                .Attribute("subscriberLastindex").Value = Dataset.ProviderLastIndex.ToString();
-
-            Provider.Save();
         }
     }
 }
