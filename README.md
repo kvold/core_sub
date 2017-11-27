@@ -38,7 +38,7 @@ dotnet publish -c Release --self-contained -r <b>osx-x64</b>
 
 ### Adding datasets
 
-When adding a provider an xml-file will be created at ${providerSettings}.xml. If you don't give a filename as an argument, one will be created based on the title found in the capabilities-document.
+When adding a provider an xml-file will be created at ${providerSettings}.xml.
 
 ```
 Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings}.xml
