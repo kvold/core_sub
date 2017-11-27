@@ -93,9 +93,8 @@ namespace CORESubscriber
         {
             foreach (var subscribed in GetSubscribedElements())
             {
-                SetDatasetVariables(subscribed);
-
-                if (!GetLastIndex.Run()) continue;
+                if(Dataset.ReadVariables(subscribed))
+                    if (!GetLastIndex.Run()) continue;
 
                 OrderChangelog.Run();
 
@@ -107,13 +106,6 @@ namespace CORESubscriber
 
                 Dataset.UpdateSettings();
             }
-        }
-
-        private static void SetDatasetVariables(XObject subscribed)
-        {
-            Dataset.Id = subscribed.Parent?.Attribute("datasetId")?.Value;
-
-            Dataset.SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
         }
 
         private static IEnumerable<XElement> GetSubscribedElements()

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+// ReSharper disable PossibleNullReferenceException
 
 namespace CORESubscriber
 {
@@ -51,12 +53,24 @@ namespace CORESubscriber
         {
             OrderedChangelogId = -1;
 
-            // ReSharper disable once PossibleNullReferenceException
             Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute("datasetId")?.Value == Dataset.Id)
-                .Attribute("subscriberLastindex").Value = Dataset.ProviderLastIndex.ToString();
+                .First(d => d.Attribute("datasetId")?.Value == Id)
+                .Attribute("subscriberLastindex").Value = ProviderLastIndex.ToString();
 
             Provider.Save();
+        }
+
+        internal static bool ReadVariables(XObject subscribed)
+        {
+            Id = subscribed.Parent?.Attribute("datasetId")?.Value;
+
+            SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
+
+            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants("dataset")
+                .First(d => d.Attribute("datasetId")?.Value == Id)
+                .Descendants("abortedChangelog").First().Attribute("changelogId").Value);
+
+            return OrderedChangelogId == -1;
         }
     }
 }
