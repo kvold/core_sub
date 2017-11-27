@@ -16,6 +16,8 @@ namespace CORESubscriber.SoapAction
             Dataset.ProviderLastIndex = Convert.ToInt64(SoapRequest.Send(action, getLastIndex)
                 .Descendants(Config.GeosynchronizationNs + "return").First().Value);
 
+            Console.WriteLine("Provider LastIndex: " + Dataset.ProviderLastIndex + ", Subscriber Lastindex: " + Dataset.SubscriberLastIndex);
+
             return Dataset.ProviderLastIndex > Dataset.SubscriberLastIndex;
         }
     }
