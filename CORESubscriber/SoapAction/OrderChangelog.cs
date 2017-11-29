@@ -29,12 +29,12 @@ namespace CORESubscriber.SoapAction
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(Config.Elements.Order).First().Attribute(Config.Attributes.StartIndex).Value =
+            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Elements.Order.LocalName).First().Attribute(Config.Attributes.StartIndex).Value =
                 (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(Config.Attributes.DatasetId).First().Value = Dataset.Id;
+            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Attributes.DatasetId.LocalName).First().Value = Dataset.Id;
 
-            orderChangelog.Descendants(Config.Elements.Order).First().Attribute("count").Value =
+            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Elements.Order.LocalName).First().Attribute("count").Value =
                 "1000";
 
             return orderChangelog;
