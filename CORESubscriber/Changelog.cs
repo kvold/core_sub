@@ -20,8 +20,6 @@ namespace CORESubscriber
         
         internal static async Task Get(string downloadUrl)
         {
-            string uuid;
-
             string zipFile;
 
             using (var client = new HttpClient())
@@ -37,13 +35,11 @@ namespace CORESubscriber
                     throw new FileNotFoundException("Statuscode when trying to download from " +
                                                     downloadUrl + " was " + result.StatusCode);
 
-                uuid = downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
+                var changelogFileName = downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
 
-                zipFile = Config.DownloadFolder + "/" + uuid;
+                zipFile = Config.DownloadFolder + "/" + changelogFileName;
 
-                uuid = uuid.Split(".")[0];
-
-                DataFolder = Config.DownloadFolder + "/" + uuid;
+                DataFolder = Config.DownloadFolder + "/" + changelogFileName.Split(".")[0];
 
                 using (var fs = new FileStream(zipFile, FileMode.Create))
                 {
@@ -51,7 +47,7 @@ namespace CORESubscriber
                 }
             }
 
-            ZipFile.ExtractToDirectory(uuid, zipFile);
+            ZipFile.ExtractToDirectory(zipFile, DataFolder);
         }
 
         internal static void Execute()
