@@ -12,7 +12,8 @@ namespace CORESubscriber.SoapAction
 
             var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelogStatus.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName).First().Value =
+            getChangelogStatus.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName)
+                    .First().Value =
                 Dataset.OrderedChangelogId.ToString();
 
             var queryCounter = 0;
@@ -25,7 +26,8 @@ namespace CORESubscriber.SoapAction
 
                 var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "return").First().Value;
 
-                Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId + " is " + returnValue);
+                Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId +
+                                  " is " + returnValue);
 
                 switch (returnValue)
                 {

@@ -17,7 +17,7 @@ namespace CORESubscriber
         private static string DataFolder { get; set; }
 
         private static string WfsClient { get; set; }
-        
+
         internal static async Task Get(string downloadUrl)
         {
             string zipFile;
@@ -53,7 +53,8 @@ namespace CORESubscriber
         internal static void Execute()
         {
             WfsClient = Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Dataset.Id).Descendants(Config.Elements.WfsClient).First()
+                .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Dataset.Id)
+                .Descendants(Config.Elements.WfsClient).First()
                 .Value;
 
             if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Dataset.Id);

@@ -6,6 +6,8 @@ namespace CORESubscriber
 {
     public class Config
     {
+        internal const string XmlMediaType = "text/xml";
+
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
         {
             {
@@ -26,11 +28,10 @@ namespace CORESubscriber
             }
         };
 
-        internal const string XmlMediaType = "text/xml";
-
         internal static readonly XNamespace OwsNs = "http://www.opengis.net/ows/1.1";
 
-        internal static readonly XNamespace GeosynchronizationNs = "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
+        internal static readonly XNamespace GeosynchronizationNs =
+            "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
         internal static readonly XNamespace ChangelogNs =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
@@ -42,6 +43,8 @@ namespace CORESubscriber
         internal static string ErrorLog = "errorLog.txt";
 
         internal static int StatusQueryDelay = 3000;
+
+        public static string OrderedChangeCount = "1000";
 
         internal class Elements
         {
@@ -93,6 +96,8 @@ namespace CORESubscriber
             public static XName ChangelogId = "changelogId";
 
             public static XName StartIndex = "startIndex";
+
+            public static XName Count = "count";
         }
     }
 }

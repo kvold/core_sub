@@ -29,9 +29,12 @@ namespace CORESubscriber
         {
             Console.WriteLine(e.Message);
 
-            using (var file = File.Exists(Config.ErrorLog) ? File.Open(Config.ErrorLog, FileMode.Append) : File.Open(Config.ErrorLog, FileMode.CreateNew))
-                using (var stream = new StreamWriter(file))
-                    stream.WriteLine(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz") + ":\r\n\t" + e.Message + ":\r\n" + e.StackTrace);
+            using (var file = File.Exists(Config.ErrorLog)
+                ? File.Open(Config.ErrorLog, FileMode.Append)
+                : File.Open(Config.ErrorLog, FileMode.CreateNew))
+            using (var stream = new StreamWriter(file))
+                stream.WriteLine(DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz") + ":\r\n\t" + e.Message + ":\r\n" +
+                                 e.StackTrace);
         }
 
         private static void Run(IReadOnlyList<string> args)
@@ -86,7 +89,7 @@ namespace CORESubscriber
         {
             foreach (var subscribed in GetSubscribedElements())
             {
-                if(Dataset.ReadVariables(subscribed))
+                if (Dataset.ReadVariables(subscribed))
                     if (!GetLastIndex.Run()) continue;
 
                 OrderChangelog.Run();

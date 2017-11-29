@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+
 // ReSharper disable PossibleNullReferenceException
 
 namespace CORESubscriber
@@ -15,13 +16,9 @@ namespace CORESubscriber
             new XAttribute(Config.Attributes.SubscriberLastIndex, -1),
 
             new XElement(Config.Elements.AbortedChangelog,
-
                 new XAttribute(Config.Attributes.EndIndex, ""),
-
                 new XAttribute(Config.Attributes.Transaction, ""),
-
                 new XAttribute(Config.Attributes.ChangelogPath, ""),
-
                 new XAttribute(Config.Attributes.ChangelogId, -1)),
 
             new XElement(Config.Elements.WfsClient, ""),
@@ -52,7 +49,8 @@ namespace CORESubscriber
         {
             Id = subscribed.Parent?.Attribute(Config.Attributes.DatasetId)?.Value;
 
-            SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute(Config.Attributes.SubscriberLastIndex)?.Value);
+            SubscriberLastIndex =
+                Convert.ToInt64(subscribed.Parent?.Attribute(Config.Attributes.SubscriberLastIndex)?.Value);
 
             OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(Config.Elements.Dataset)
                 .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Id)
