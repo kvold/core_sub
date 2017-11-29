@@ -47,6 +47,8 @@ namespace CORESubscriber
                 }
             }
 
+            if(Directory.Exists(DataFolder)) Directory.Delete(DataFolder, true);
+
             ZipFile.ExtractToDirectory(zipFile, DataFolder);
         }
 
