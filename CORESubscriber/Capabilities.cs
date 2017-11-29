@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CORESubscriber.SoapAction
+namespace CORESubscriber
 {
     internal class Capabilities
     {
