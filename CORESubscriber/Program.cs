@@ -100,7 +100,7 @@ namespace CORESubscriber
 
                 GetChangelogStatus.Run();
 
-                Changelog.Get(GetChangelog.Run());
+                Changelog.Get(GetChangelog.Run()).Wait();
 
                 Changelog.Execute();
 

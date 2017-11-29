@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Xml.Linq;
 
@@ -17,7 +18,7 @@ namespace CORESubscriber
 
         private static string WfsClient { get; set; }
 
-        internal static void Get(string downloadUrl)
+        internal static async Task Get(string downloadUrl)
         {
             string uuid;
 
@@ -46,16 +47,11 @@ namespace CORESubscriber
 
                 using (var fs = new FileStream(zipFile, FileMode.Create))
                 {
-                    result.Content.CopyToAsync(fs);
+                    await result.Content.CopyToAsync(fs);
                 }
             }
 
-            Unzip(uuid, zipFile);
-        }
-
-        internal static void Unzip(string uuid, string zipFile)
-        {
-            ZipFile.ExtractToDirectory(zipFile, Config.DownloadFolder);
+            ZipFile.ExtractToDirectory(uuid, zipFile);
         }
 
         internal static void Execute()
