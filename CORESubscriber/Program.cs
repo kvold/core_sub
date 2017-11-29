@@ -9,13 +9,6 @@ namespace CORESubscriber
 {
     internal class Program
     {
-        internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>
-        {
-            {"add", new List<string> {"uri", "user", "password", "outputFile"}},
-            {"sync", new List<string> {"configFile", "tempFolder"}}
-        };
-
-
         private static void Main(string[] args)
         {
             try
@@ -110,7 +103,7 @@ namespace CORESubscriber
 
         private static IEnumerable<XElement> GetSubscribedElements()
         {
-            return Provider.ConfigFileXml.Descendants("dataset").Descendants("subscribed")
+            return Provider.ConfigFileXml.Descendants(Config.Elements.Dataset).Descendants(Config.Elements.Subscribed)
                 .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
                     StringComparison.CurrentCultureIgnoreCase));
         }
@@ -121,7 +114,7 @@ namespace CORESubscriber
 
             Console.WriteLine();
 
-            foreach (var action in Actions)
+            foreach (var action in Config.Actions)
             {
                 Console.WriteLine(action.Key + ":");
 

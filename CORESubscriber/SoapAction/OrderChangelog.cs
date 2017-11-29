@@ -17,11 +17,11 @@ namespace CORESubscriber.SoapAction
             var responseContent = SoapRequest.Send(action, SetOrderVariables(SoapRequest.GetSoapContentByAction(action)));
 
             Dataset.OrderedChangelogId =
-                Convert.ToInt64(responseContent.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value);
+                Convert.ToInt64(responseContent.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName).First().Value);
 
-            Provider.ConfigFileXml.Descendants("dataset")
-                    .First(d => d.Attribute("datasetId")?.Value == Dataset.Id)
-                    .Descendants("abortedChangelog").First().Attribute("changelogId").Value =
+            Provider.ConfigFileXml.Descendants(Config.Elements.Dataset)
+                    .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Dataset.Id)
+                    .Descendants(Config.Elements.AbortedChangelog).First().Attribute(Config.Attributes.ChangelogId).Value =
                 Dataset.OrderedChangelogId.ToString();
 
             Provider.Save();
@@ -29,12 +29,12 @@ namespace CORESubscriber.SoapAction
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("startIndex").Value =
+            orderChangelog.Descendants(Config.Elements.Order).First().Attribute(Config.Attributes.StartIndex).Value =
                 (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(Config.GeosynchronizationNs + "datasetId").First().Value = Dataset.Id;
+            orderChangelog.Descendants(Config.Attributes.DatasetId).First().Value = Dataset.Id;
 
-            orderChangelog.Descendants(Config.GeosynchronizationNs + "order").First().Attribute("count").Value =
+            orderChangelog.Descendants(Config.Elements.Order).First().Attribute("count").Value =
                 "1000";
 
             return orderChangelog;

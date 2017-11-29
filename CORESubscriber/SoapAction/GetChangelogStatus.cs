@@ -12,7 +12,7 @@ namespace CORESubscriber.SoapAction
 
             var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelogStatus.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
+            getChangelogStatus.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName).First().Value =
                 Dataset.OrderedChangelogId.ToString();
 
             var queryCounter = 0;
@@ -30,7 +30,7 @@ namespace CORESubscriber.SoapAction
                 switch (returnValue)
                 {
                     case "working":
-                        Task.Delay(3000).Wait();
+                        Task.Delay(Config.StatusQueryDelay).Wait();
                         continue;
                     case "finished":
                         return;

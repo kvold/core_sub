@@ -10,12 +10,12 @@ namespace CORESubscriber.SoapAction
 
             var getChangelog = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelog.Descendants(Config.GeosynchronizationNs + "changelogId").First().Value =
+            getChangelog.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName).First().Value =
                 Dataset.OrderedChangelogId.ToString();
 
             var responseContent = SoapRequest.Send(action, getChangelog);
 
-            var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "downloadUri").First().Value;
+            var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + Config.Elements.DownloadUri.LocalName).First().Value;
 
             return returnValue;
         }

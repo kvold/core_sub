@@ -10,36 +10,24 @@ namespace CORESubscriber
     {
         internal static readonly List<object> DefaultElements = new List<object>
         {
-            new XAttribute("nameSpace", ""),
+            new XAttribute(Config.Attributes.Namespace, ""),
 
-            new XAttribute("subscriberLastindex", -1),
+            new XAttribute(Config.Attributes.SubscriberLastIndex, -1),
 
-            new XElement("abortedChangelog",
+            new XElement(Config.Elements.AbortedChangelog,
 
-                new XAttribute("endIndex", ""),
+                new XAttribute(Config.Attributes.EndIndex, ""),
 
-                new XAttribute("transaction", ""),
+                new XAttribute(Config.Attributes.Transaction, ""),
 
-                new XAttribute("changelogPath", ""),
+                new XAttribute(Config.Attributes.ChangelogPath, ""),
 
-                new XAttribute("changelogId", -1)),
+                new XAttribute(Config.Attributes.ChangelogId, -1)),
 
-            new XElement("wfsClient", ""),
+            new XElement(Config.Elements.WfsClient, ""),
 
-            new XElement("subscribed", bool.FalseString)
+            new XElement(Config.Elements.Subscribed, bool.FalseString)
         };
-
-        internal static readonly List<string> Fields =
-            new List<string>
-            {
-                "datasetId",
-
-                "name",
-
-                "version",
-
-                "applicationSchema"
-            };
 
         internal static string Id { get; set; }
 
@@ -54,21 +42,21 @@ namespace CORESubscriber
             OrderedChangelogId = -1;
 
             Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute("datasetId")?.Value == Id)
-                .Attribute("subscriberLastindex").Value = ProviderLastIndex.ToString();
+                .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Id)
+                .Attribute(Config.Attributes.SubscriberLastIndex).Value = ProviderLastIndex.ToString();
 
             Provider.Save();
         }
 
         internal static bool ReadVariables(XObject subscribed)
         {
-            Id = subscribed.Parent?.Attribute("datasetId")?.Value;
+            Id = subscribed.Parent?.Attribute(Config.Attributes.DatasetId)?.Value;
 
-            SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute("subscriberLastindex")?.Value);
+            SubscriberLastIndex = Convert.ToInt64(subscribed.Parent?.Attribute(Config.Attributes.SubscriberLastIndex)?.Value);
 
-            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants("dataset")
-                .First(d => d.Attribute("datasetId")?.Value == Id)
-                .Descendants("abortedChangelog").First().Attribute("changelogId").Value);
+            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(Config.Elements.Dataset)
+                .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Id)
+                .Descendants(Config.Elements.AbortedChangelog).First().Attribute(Config.Attributes.ChangelogId).Value);
 
             return OrderedChangelogId == -1;
         }
