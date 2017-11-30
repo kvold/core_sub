@@ -9,9 +9,7 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            const string action = "GetChangelogStatus";
-
-            var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
+            var getChangelogStatus = SoapRequest.GetSoapContentByAction(SoapActions.GetChangelogStatus);
 
             getChangelogStatus.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName)
                     .First().Value =
@@ -23,7 +21,7 @@ namespace CORESubscriber.SoapAction
             {
                 queryCounter++;
 
-                var responseContent = SoapRequest.Send(action, getChangelogStatus);
+                var responseContent = SoapRequest.Send(SoapActions.GetChangelogStatus, getChangelogStatus);
 
                 var returnValue = responseContent.Descendants(XmlNamespaces.Geosynchronization + "return").First()
                     .Value;

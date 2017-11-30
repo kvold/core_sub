@@ -10,11 +10,9 @@ namespace CORESubscriber.SoapAction
     {
         public static bool Run()
         {
-            const string action = "GetCapabilities";
+            var getCapabilities = SoapRequest.GetSoapContentByAction(SoapActions.GetCapabilities);
 
-            var getCapabilities = SoapRequest.GetSoapContentByAction(action);
-
-            var responseContent = SoapRequest.Send(action, getCapabilities);
+            var responseContent = SoapRequest.Send(SoapActions.GetCapabilities, getCapabilities);
 
             if (Provider.ConfigFile == null)
                 Provider.ConfigFile = responseContent.Descendants(XmlNamespaces.Ows + XmlElements.Title.LocalName)

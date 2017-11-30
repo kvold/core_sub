@@ -8,14 +8,12 @@ namespace CORESubscriber.SoapAction
     {
         public static bool Run()
         {
-            const string action = "GetLastIndex";
-
-            var getLastIndex = SoapRequest.GetSoapContentByAction(action);
+            var getLastIndex = SoapRequest.GetSoapContentByAction(SoapActions.GetLastIndex);
 
             getLastIndex.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            Dataset.ProviderLastIndex = Convert.ToInt64(SoapRequest.Send(action, getLastIndex)
+            Dataset.ProviderLastIndex = Convert.ToInt64(SoapRequest.Send(SoapActions.GetLastIndex, getLastIndex)
                 .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Return.LocalName).First().Value);
 
             Console.WriteLine("Provider LastIndex: " + Dataset.ProviderLastIndex + ", Subscriber Lastindex: " +

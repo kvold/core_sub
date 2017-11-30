@@ -7,15 +7,13 @@ namespace CORESubscriber.SoapAction
     {
         public static string Run()
         {
-            const string action = "GetChangelog";
-
-            var getChangelog = SoapRequest.GetSoapContentByAction(action);
+            var getChangelog = SoapRequest.GetSoapContentByAction(SoapActions.GetChangelog);
 
             getChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName).First()
                     .Value =
                 Dataset.OrderedChangelogId.ToString();
 
-            var responseContent = SoapRequest.Send(action, getChangelog);
+            var responseContent = SoapRequest.Send(SoapActions.GetChangelog, getChangelog);
 
             var returnValue = responseContent
                 .Descendants(XmlNamespaces.Geosynchronization + XmlElements.DownloadUri.LocalName).First().Value;

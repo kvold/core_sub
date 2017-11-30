@@ -13,10 +13,8 @@ namespace CORESubscriber.SoapAction
         {
             if (Dataset.OrderedChangelogId != -1) return;
 
-            const string action = "OrderChangelog";
-
             var responseContent =
-                SoapRequest.Send(action, SetOrderVariables(SoapRequest.GetSoapContentByAction(action)));
+                SoapRequest.Send(SoapActions.OrderChangelog, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog)));
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
