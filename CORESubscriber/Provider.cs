@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
-using CORESubscriber.SoapAction;
 using CORESubscriber.Xml;
 
 namespace CORESubscriber

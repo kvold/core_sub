@@ -25,7 +25,8 @@ namespace CORESubscriber.SoapAction
 
                 var responseContent = SoapRequest.Send(action, getChangelogStatus);
 
-                var returnValue = responseContent.Descendants(XmlNamespaces.Geosynchronization + "return").First().Value;
+                var returnValue = responseContent.Descendants(XmlNamespaces.Geosynchronization + "return").First()
+                    .Value;
 
                 Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId +
                                   " is " + returnValue);

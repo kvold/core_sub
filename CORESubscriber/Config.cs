@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
 using CORESubscriber.Xml;
 
 namespace CORESubscriber
@@ -36,6 +35,5 @@ namespace CORESubscriber
         internal static int StatusQueryDelay = 3000;
 
         public static string OrderedChangeCount = "1000";
-        
     }
 }
