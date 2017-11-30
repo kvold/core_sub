@@ -107,7 +107,7 @@ namespace CORESubscriber
 
         private static IEnumerable<XElement> GetSubscribedElements()
         {
-            return Provider.ConfigFileXml.Descendants(XmlNames.Elements.Dataset).Descendants(XmlNames.Elements.Subscribed)
+            return Provider.ConfigFileXml.Descendants(XmlElements.Dataset).Descendants(XmlElements.Subscribed)
                 .Where(s => string.Equals(s.Value.ToString(), bool.TrueString,
                     StringComparison.CurrentCultureIgnoreCase));
         }

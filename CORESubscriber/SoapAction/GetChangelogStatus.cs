@@ -13,7 +13,7 @@ namespace CORESubscriber.SoapAction
 
             var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelogStatus.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.ChangelogId.LocalName)
+            getChangelogStatus.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName)
                     .First().Value =
                 Dataset.OrderedChangelogId.ToString();
 

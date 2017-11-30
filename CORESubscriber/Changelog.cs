@@ -56,8 +56,8 @@ namespace CORESubscriber
         internal static void Execute()
         {
             WfsClient = Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Dataset.Id)
-                .Descendants(XmlNames.Elements.WfsClient).First()
+                .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
+                .Descendants(XmlElements.WfsClient).First()
                 .Value;
 
             if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Dataset.Id);

@@ -20,11 +20,11 @@ namespace CORESubscriber.SoapAction
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
-                    .Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.ChangelogId.LocalName).First().Value);
+                    .Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName).First().Value);
 
-            Provider.ConfigFileXml.Descendants(XmlNames.Elements.Dataset)
-                    .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Dataset.Id)
-                    .Descendants(XmlNames.Elements.AbortedChangelog).First().Attribute(XmlNames.Attributes.ChangelogId)
+            Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
+                    .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
+                    .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId)
                     .Value =
                 Dataset.OrderedChangelogId.ToString();
 
@@ -33,15 +33,15 @@ namespace CORESubscriber.SoapAction
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Order.LocalName).First()
-                    .Attribute(XmlNames.Attributes.StartIndex).Value =
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlElements.Order.LocalName).First()
+                    .Attribute(XmlAttributes.StartIndex).Value =
                 (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.DatasetId.LocalName).First()
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Order.LocalName).First()
-                    .Attribute(XmlNames.Attributes.Count).Value =
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlElements.Order.LocalName).First()
+                    .Attribute(XmlAttributes.Count).Value =
                 Config.OrderedChangeCount;
 
             return orderChangelog;

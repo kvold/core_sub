@@ -12,11 +12,11 @@ namespace CORESubscriber.SoapAction
 
             var getLastIndex = SoapRequest.GetSoapContentByAction(action);
 
-            getLastIndex.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.DatasetId.LocalName).First()
+            getLastIndex.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
             Dataset.ProviderLastIndex = Convert.ToInt64(SoapRequest.Send(action, getLastIndex)
-                .Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Return.LocalName).First().Value);
+                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Return.LocalName).First().Value);
 
             Console.WriteLine("Provider LastIndex: " + Dataset.ProviderLastIndex + ", Subscriber Lastindex: " +
                               Dataset.SubscriberLastIndex);

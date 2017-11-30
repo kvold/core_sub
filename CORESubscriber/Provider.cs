@@ -48,13 +48,13 @@ namespace CORESubscriber
         {
             ConfigFileXml = ReadConfigFile();
 
-            var provider = ConfigFileXml.Descendants(XmlNames.Elements.Provider).First();
+            var provider = ConfigFileXml.Descendants(XmlElements.Provider).First();
 
-            Password = provider.Attribute(XmlNames.Attributes.Password)?.Value;
+            Password = provider.Attribute(XmlAttributes.Password)?.Value;
 
-            User = provider.Attribute(XmlNames.Attributes.User)?.Value;
+            User = provider.Attribute(XmlAttributes.User)?.Value;
 
-            ApiUrl = provider.Attribute(XmlNames.Attributes.Uri)?.Value;
+            ApiUrl = provider.Attribute(XmlAttributes.Uri)?.Value;
         }
 
         private static XDocument ReadConfigFile()
@@ -66,17 +66,17 @@ namespace CORESubscriber
         {
             foreach (var xElement in datasetsList)
             {
-                if (datasetsDocument.Descendants(XmlNames.Elements.Provider).Descendants().Any(d =>
+                if (datasetsDocument.Descendants(XmlElements.Provider).Descendants().Any(d =>
                     Capabilities.Fields.All(f =>
                         d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
                 ))
                     continue;
 
                 // ReSharper disable once PossibleNullReferenceException
-                xElement.Attribute(XmlNames.Attributes.Namespace).Value =
-                    GetNamespaceFromApplicationSchema(xElement.Attribute(XmlNames.Attributes.ApplicationSchema)?.Value);
+                xElement.Attribute(XmlAttributes.Namespace).Value =
+                    GetNamespaceFromApplicationSchema(xElement.Attribute(XmlAttributes.ApplicationSchema)?.Value);
 
-                datasetsDocument.Descendants(XmlNames.Elements.Provider)
+                datasetsDocument.Descendants(XmlElements.Provider)
                     .First()?.Add(xElement);
             }
         }
@@ -91,7 +91,7 @@ namespace CORESubscriber
 
                     var xsd = XDocument.Parse(result.Content.ReadAsStringAsync().Result);
 
-                    return xsd.Root?.Attribute(XmlNames.Attributes.TargetNamespace)?.Value;
+                    return xsd.Root?.Attribute(XmlAttributes.TargetNamespace)?.Value;
                 }
                 catch (Exception)
                 {
@@ -102,13 +102,13 @@ namespace CORESubscriber
 
         private static XElement CreateDefaultProvider()
         {
-            var providerElement = new XElement(XmlNames.Elements.Provider);
+            var providerElement = new XElement(XmlElements.Provider);
 
             providerElement.Add(new List<object>
             {
-                new XAttribute(XmlNames.Attributes.Uri, ApiUrl),
-                new XAttribute(XmlNames.Attributes.User, User),
-                new XAttribute(XmlNames.Attributes.Password, Password)
+                new XAttribute(XmlAttributes.Uri, ApiUrl),
+                new XAttribute(XmlAttributes.User, User),
+                new XAttribute(XmlAttributes.Password, Password)
             });
 
             return providerElement;

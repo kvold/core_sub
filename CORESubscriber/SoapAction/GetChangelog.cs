@@ -11,14 +11,14 @@ namespace CORESubscriber.SoapAction
 
             var getChangelog = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.ChangelogId.LocalName).First()
+            getChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName).First()
                     .Value =
                 Dataset.OrderedChangelogId.ToString();
 
             var responseContent = SoapRequest.Send(action, getChangelog);
 
             var returnValue = responseContent
-                .Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.DownloadUri.LocalName).First().Value;
+                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.DownloadUri.LocalName).First().Value;
 
             return returnValue;
         }

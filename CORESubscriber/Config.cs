@@ -14,9 +14,9 @@ namespace CORESubscriber
             {
                 "add", new List<string>
                 {
-                    XmlNames.Attributes.Uri.LocalName,
-                    XmlNames.Attributes.User.LocalName,
-                    XmlNames.Attributes.Password.LocalName,
+                    XmlAttributes.Uri.LocalName,
+                    XmlAttributes.User.LocalName,
+                    XmlAttributes.Password.LocalName,
                     "outputFile"
                 }
             },
@@ -28,8 +28,6 @@ namespace CORESubscriber
                 }
             }
         };
-
-
 
         internal static string DownloadFolder = Path.GetTempPath();
 

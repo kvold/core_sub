@@ -12,19 +12,19 @@ namespace CORESubscriber
     {
         internal static readonly List<object> DefaultElements = new List<object>
         {
-            new XAttribute(XmlNames.Attributes.Namespace, ""),
+            new XAttribute(XmlAttributes.Namespace, ""),
 
-            new XAttribute(XmlNames.Attributes.SubscriberLastIndex, -1),
+            new XAttribute(XmlAttributes.SubscriberLastIndex, -1),
 
-            new XElement(XmlNames.Elements.AbortedChangelog,
-                new XAttribute(XmlNames.Attributes.EndIndex, ""),
-                new XAttribute(XmlNames.Attributes.Transaction, ""),
-                new XAttribute(XmlNames.Attributes.ChangelogPath, ""),
-                new XAttribute(XmlNames.Attributes.ChangelogId, -1)),
+            new XElement(XmlElements.AbortedChangelog,
+                new XAttribute(XmlAttributes.EndIndex, ""),
+                new XAttribute(XmlAttributes.Transaction, ""),
+                new XAttribute(XmlAttributes.ChangelogPath, ""),
+                new XAttribute(XmlAttributes.ChangelogId, -1)),
 
-            new XElement(XmlNames.Elements.WfsClient, ""),
+            new XElement(XmlElements.WfsClient, ""),
 
-            new XElement(XmlNames.Elements.Subscribed, bool.FalseString)
+            new XElement(XmlElements.Subscribed, bool.FalseString)
         };
 
         internal static string Id { get; set; }
@@ -40,22 +40,22 @@ namespace CORESubscriber
             OrderedChangelogId = -1;
 
             Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Id)
-                .Attribute(XmlNames.Attributes.SubscriberLastIndex).Value = ProviderLastIndex.ToString();
+                .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
+                .Attribute(XmlAttributes.SubscriberLastIndex).Value = ProviderLastIndex.ToString();
 
             Provider.Save();
         }
 
         internal static bool ReadVariables(XObject subscribed)
         {
-            Id = subscribed.Parent?.Attribute(XmlNames.Attributes.DatasetId)?.Value;
+            Id = subscribed.Parent?.Attribute(XmlAttributes.DatasetId)?.Value;
 
             SubscriberLastIndex =
-                Convert.ToInt64(subscribed.Parent?.Attribute(XmlNames.Attributes.SubscriberLastIndex)?.Value);
+                Convert.ToInt64(subscribed.Parent?.Attribute(XmlAttributes.SubscriberLastIndex)?.Value);
 
-            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(XmlNames.Elements.Dataset)
-                .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Id)
-                .Descendants(XmlNames.Elements.AbortedChangelog).First().Attribute(XmlNames.Attributes.ChangelogId).Value);
+            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
+                .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
+                .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value);
 
             return OrderedChangelogId == -1;
         }

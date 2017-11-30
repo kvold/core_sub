@@ -8,13 +8,13 @@ namespace CORESubscriber
         internal static readonly List<string> Fields =
             new List<string>
             {
-                XmlNames.Attributes.DatasetId.LocalName,
+                XmlAttributes.DatasetId.LocalName,
 
                 "name",
 
                 "version",
 
-                XmlNames.Attributes.ApplicationSchema.LocalName
+                XmlAttributes.ApplicationSchema.LocalName
             };
     }
 }
