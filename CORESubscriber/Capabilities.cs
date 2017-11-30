@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber
 {
@@ -7,13 +8,13 @@ namespace CORESubscriber
         internal static readonly List<string> Fields =
             new List<string>
             {
-                Config.Attributes.DatasetId.LocalName,
+                XmlNames.Attributes.DatasetId.LocalName,
 
                 "name",
 
                 "version",
 
-                Config.Attributes.ApplicationSchema.LocalName
+                XmlNames.Attributes.ApplicationSchema.LocalName
             };
     }
 }

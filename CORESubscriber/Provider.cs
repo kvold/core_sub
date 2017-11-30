@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Xml.Linq;
 using CORESubscriber.SoapAction;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber
 {
@@ -47,13 +48,13 @@ namespace CORESubscriber
         {
             ConfigFileXml = ReadConfigFile();
 
-            var provider = ConfigFileXml.Descendants(Config.Elements.Provider).First();
+            var provider = ConfigFileXml.Descendants(XmlNames.Elements.Provider).First();
 
-            Password = provider.Attribute(Config.Attributes.Password)?.Value;
+            Password = provider.Attribute(XmlNames.Attributes.Password)?.Value;
 
-            User = provider.Attribute(Config.Attributes.User)?.Value;
+            User = provider.Attribute(XmlNames.Attributes.User)?.Value;
 
-            ApiUrl = provider.Attribute(Config.Attributes.Uri)?.Value;
+            ApiUrl = provider.Attribute(XmlNames.Attributes.Uri)?.Value;
         }
 
         private static XDocument ReadConfigFile()
@@ -65,17 +66,17 @@ namespace CORESubscriber
         {
             foreach (var xElement in datasetsList)
             {
-                if (datasetsDocument.Descendants(Config.Elements.Provider).Descendants().Any(d =>
+                if (datasetsDocument.Descendants(XmlNames.Elements.Provider).Descendants().Any(d =>
                     Capabilities.Fields.All(f =>
                         d.Attribute(f)?.Value == xElement.Attribute(f)?.Value)
                 ))
                     continue;
 
                 // ReSharper disable once PossibleNullReferenceException
-                xElement.Attribute(Config.Attributes.Namespace).Value =
-                    GetNamespaceFromApplicationSchema(xElement.Attribute(Config.Attributes.ApplicationSchema)?.Value);
+                xElement.Attribute(XmlNames.Attributes.Namespace).Value =
+                    GetNamespaceFromApplicationSchema(xElement.Attribute(XmlNames.Attributes.ApplicationSchema)?.Value);
 
-                datasetsDocument.Descendants(Config.Elements.Provider)
+                datasetsDocument.Descendants(XmlNames.Elements.Provider)
                     .First()?.Add(xElement);
             }
         }
@@ -90,7 +91,7 @@ namespace CORESubscriber
 
                     var xsd = XDocument.Parse(result.Content.ReadAsStringAsync().Result);
 
-                    return xsd.Root?.Attribute(Config.Attributes.TargetNamespace)?.Value;
+                    return xsd.Root?.Attribute(XmlNames.Attributes.TargetNamespace)?.Value;
                 }
                 catch (Exception)
                 {
@@ -101,13 +102,13 @@ namespace CORESubscriber
 
         private static XElement CreateDefaultProvider()
         {
-            var providerElement = new XElement(Config.Elements.Provider);
+            var providerElement = new XElement(XmlNames.Elements.Provider);
 
             providerElement.Add(new List<object>
             {
-                new XAttribute(Config.Attributes.Uri, ApiUrl),
-                new XAttribute(Config.Attributes.User, User),
-                new XAttribute(Config.Attributes.Password, Password)
+                new XAttribute(XmlNames.Attributes.Uri, ApiUrl),
+                new XAttribute(XmlNames.Attributes.User, User),
+                new XAttribute(XmlNames.Attributes.Password, Password)
             });
 
             return providerElement;

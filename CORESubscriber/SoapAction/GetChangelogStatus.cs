@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber.SoapAction
 {
@@ -12,7 +13,7 @@ namespace CORESubscriber.SoapAction
 
             var getChangelogStatus = SoapRequest.GetSoapContentByAction(action);
 
-            getChangelogStatus.Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName)
+            getChangelogStatus.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.ChangelogId.LocalName)
                     .First().Value =
                 Dataset.OrderedChangelogId.ToString();
 
@@ -24,7 +25,7 @@ namespace CORESubscriber.SoapAction
 
                 var responseContent = SoapRequest.Send(action, getChangelogStatus);
 
-                var returnValue = responseContent.Descendants(Config.GeosynchronizationNs + "return").First().Value;
+                var returnValue = responseContent.Descendants(XmlNamespaces.Geosynchronization + "return").First().Value;
 
                 Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId +
                                   " is " + returnValue);

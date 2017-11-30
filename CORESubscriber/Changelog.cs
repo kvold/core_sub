@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Xml.Linq;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber
 {
@@ -55,8 +56,8 @@ namespace CORESubscriber
         internal static void Execute()
         {
             WfsClient = Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Dataset.Id)
-                .Descendants(Config.Elements.WfsClient).First()
+                .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Dataset.Id)
+                .Descendants(XmlNames.Elements.WfsClient).First()
                 .Value;
 
             if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Dataset.Id);
@@ -74,9 +75,9 @@ namespace CORESubscriber
             {
                 var changelogXml = XDocument.Parse(fileInfo.OpenText().ReadToEnd());
 
-                foreach (var transaction in changelogXml.Descendants(Config.ChangelogNs + "transactions"))
+                foreach (var transaction in changelogXml.Descendants(XmlNamespaces.Changelog + "transactions"))
                 {
-                    transaction.Name = Config.WfsNs + "Transaction";
+                    transaction.Name = XmlNamespaces.Wfs + "Transaction";
 
                     Send(new XDocument(transaction));
                 }
@@ -100,7 +101,7 @@ namespace CORESubscriber
                 }
 
                 Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result)
-                    .Descendants(Config.WfsNs + "TransactionSummary").First().ToString());
+                    .Descendants(XmlNamespaces.Wfs + "TransactionSummary").First().ToString());
             }
         }
     }

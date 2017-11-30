@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber.SoapAction
 {
@@ -16,7 +17,7 @@ namespace CORESubscriber.SoapAction
             var responseContent = SoapRequest.Send(action, getCapabilities);
 
             if (Provider.ConfigFile == null)
-                Provider.ConfigFile = responseContent.Descendants(Config.OwsNs + Config.Elements.Title.LocalName)
+                Provider.ConfigFile = responseContent.Descendants(XmlNamespaces.Ows + XmlNames.Elements.Title.LocalName)
                                           .First().Value
                                           .Replace(" ", "_") + ".xml";
 
@@ -33,10 +34,10 @@ namespace CORESubscriber.SoapAction
         {
             var datasetsList = new List<XElement>();
 
-            foreach (var dataset in result.Descendants(Config.GeosynchronizationNs + Config.Elements.Datasets.LocalName)
+            foreach (var dataset in result.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Datasets.LocalName)
                 .Descendants())
             {
-                var datasetElement = new XElement(Config.Elements.Dataset);
+                var datasetElement = new XElement(XmlNames.Elements.Dataset);
 
                 foreach (var field in dataset.Descendants()
                     .Where(d => Capabilities.Fields.Contains(d.Name.LocalName)))

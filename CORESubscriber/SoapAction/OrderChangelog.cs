@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml.Linq;
+using CORESubscriber.Xml;
 
 // ReSharper disable PossibleNullReferenceException
 
@@ -19,11 +20,11 @@ namespace CORESubscriber.SoapAction
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
-                    .Descendants(Config.GeosynchronizationNs + Config.Attributes.ChangelogId.LocalName).First().Value);
+                    .Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.ChangelogId.LocalName).First().Value);
 
-            Provider.ConfigFileXml.Descendants(Config.Elements.Dataset)
-                    .First(d => d.Attribute(Config.Attributes.DatasetId)?.Value == Dataset.Id)
-                    .Descendants(Config.Elements.AbortedChangelog).First().Attribute(Config.Attributes.ChangelogId)
+            Provider.ConfigFileXml.Descendants(XmlNames.Elements.Dataset)
+                    .First(d => d.Attribute(XmlNames.Attributes.DatasetId)?.Value == Dataset.Id)
+                    .Descendants(XmlNames.Elements.AbortedChangelog).First().Attribute(XmlNames.Attributes.ChangelogId)
                     .Value =
                 Dataset.OrderedChangelogId.ToString();
 
@@ -32,15 +33,15 @@ namespace CORESubscriber.SoapAction
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Elements.Order.LocalName).First()
-                    .Attribute(Config.Attributes.StartIndex).Value =
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Order.LocalName).First()
+                    .Attribute(XmlNames.Attributes.StartIndex).Value =
                 (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Attributes.DatasetId.LocalName).First()
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Attributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            orderChangelog.Descendants(Config.GeosynchronizationNs + Config.Elements.Order.LocalName).First()
-                    .Attribute(Config.Attributes.Count).Value =
+            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlNames.Elements.Order.LocalName).First()
+                    .Attribute(XmlNames.Attributes.Count).Value =
                 Config.OrderedChangeCount;
 
             return orderChangelog;

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Xml.Linq;
+using CORESubscriber.Xml;
 
 namespace CORESubscriber.SoapAction
 {
@@ -52,7 +53,7 @@ namespace CORESubscriber.SoapAction
 
             request.Content.Headers.ContentType = new MediaTypeHeaderValue(Config.XmlMediaType);
 
-            request.Headers.Add("SOAPAction", Config.GeosynchronizationNs.NamespaceName + "/#" + action);
+            request.Headers.Add("SOAPAction", XmlNamespaces.Geosynchronization.NamespaceName + "/#" + action);
 
             return request;
         }
