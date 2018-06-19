@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jarped/CORESubscriber.svg?branch=master)](https://travis-ci.org/jarped/CORESubscriber)
+[![Build Status](https://api.travis-ci.org/kartverket/CORESubscriber.svg?branch=master)](https://travis-ci.org/kartverket/CORESubscriber)
 
 # CORESubscriber
 
@@ -17,19 +17,19 @@ See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-ri
 
 #### Windows 10 64bit
 <pre>
-git clone https://github.com/jarped/CORESubscriber.git
+git clone https://github.com/kartverket/CORESubscriber.git
 cd CORESubscriber/CORESubscriber
 dotnet publish -c Release --self-contained -r <b>win10-x64</b>
 </pre>
 #### Ubuntu
 <pre>
-git clone https://github.com/jarped/CORESubscriber.git
+git clone https://github.com/kartverket/CORESubscriber.git
 cd CORESubscriber/CORESubscriber
 dotnet publish -c Release --self-contained -r <b>ubuntu-x64</b>
 </pre>
 #### Mac
 <pre>
-git clone https://github.com/jarped/CORESubscriber.git
+git clone https://github.com/kartverket/CORESubscriber.git
 cd CORESubscriber/CORESubscriber
 dotnet publish -c Release --self-contained -r <b>osx-x64</b>
 </pre>
