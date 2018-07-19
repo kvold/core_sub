@@ -71,15 +71,12 @@ namespace CORESubscriber.SoapAction
 
         private static void GetVersionAndPrecision(XElement datasetElement)
         {
-            //Debug.Assert(datasetElement != null, nameof(datasetElement) + " != null");
-
             Dataset.Id = (string) datasetElement.Attribute(XmlAttributes.DatasetId.LocalName);
-
-            //datasetElement.Attribute(XmlAttributes.DatasetVersion).Value = GetDatasetVersion.Run();
 
             var precision = GetPrecision.Run();
 
             var datasetPrecision = datasetElement.Descendants(XmlElements.Precision).First();
+
             datasetPrecision.Attribute(XmlAttributes.Tolerance).Value = precision.Tolerance.ToString(CultureInfo.InvariantCulture);
             datasetPrecision.Attribute(XmlAttributes.Decimals).Value = precision.Decimals;
             datasetPrecision.Attribute(XmlAttributes.EpsgCode).Value = precision.EpsgCode;
