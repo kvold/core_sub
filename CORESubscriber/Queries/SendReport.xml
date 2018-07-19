@@ -1,0 +1,19 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <prod:SendReport>
+         <!--Optional:-->
+         <prod:report>
+            <prod:type>?</prod:type>
+            <prod:subscriberId>?</prod:subscriberId>
+            <prod:subscriberType>?</prod:subscriberType>
+            <prod:datasetId>?</prod:datasetId>
+            <prod:description>?</prod:description>
+            <!--Optional:-->
+            <prod:changelogId>?</prod:changelogId>
+            <!--Zero or more repetitions:-->
+            <prod:localId>?</prod:localId>
+         </prod:report>
+      </prod:SendReport>
+   </soapenv:Body>
+</soapenv:Envelope>

@@ -31,5 +31,13 @@ namespace CORESubscriber.Xml
         public static XName StartIndex = "startIndex";
 
         public static XName Count = "count";
+
+        public static XName EpsgCode = "epsgCode";
+
+        public static XName Decimals = "decimals";
+
+        public static XName Tolerance = "tolerance";
+
+        public static XName Version = "version";
     }
 }

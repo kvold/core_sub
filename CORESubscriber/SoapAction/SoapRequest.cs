@@ -12,7 +12,11 @@ namespace CORESubscriber.SoapAction
     {
         public static XDocument GetSoapContentByAction(string action)
         {
-            return XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
+            var soapContent = XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
+
+            soapContent.Root?.SetAttributeValue(XNamespace.Xmlns + "prod", Config.Version);
+
+            return soapContent;
         }
 
         public static XDocument Send(string action, XDocument requestContent)

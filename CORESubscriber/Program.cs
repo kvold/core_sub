@@ -93,7 +93,8 @@ namespace CORESubscriber
                 if (Dataset.ReadVariables(subscribed))
                     if (!GetLastIndex.Run()) continue;
 
-                OrderChangelog.Run();
+                if(string.IsNullOrEmpty(Dataset.Version)) OrderChangelog.Run();
+                else OrderChangelog2.Run();
 
                 GetChangelogStatus.Run();
 

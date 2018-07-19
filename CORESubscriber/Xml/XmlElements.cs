@@ -23,5 +23,9 @@ namespace CORESubscriber.Xml
         public static XName Title = "Title";
 
         public static XName Datasets = "datasets";
+
+        public static XName Precision = "precision";
+
+        public static XName Fault = "Fault";
     }
 }

@@ -1,0 +1,13 @@
+﻿<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <prod:OrderChangelog2>
+      <!--Optional:-->
+      <prod:order service="WFS" version="?" handle="?" startIndex="0" count="?" resultType="results" outputFormat="application/gml+xml; version=3.2" resolve="none" resolveDepth="*" resolveTimeout="300">
+        <prod:datasetId></prod:datasetId>
+      </prod:order>
+      <!--Optional:-->
+      <prod:datasetVersion></prod:datasetVersion>
+    </prod:OrderChangelog2>
+  </soapenv:Body>
+</soapenv:Envelope>

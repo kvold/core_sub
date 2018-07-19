@@ -24,7 +24,14 @@ namespace CORESubscriber
 
             new XElement(XmlElements.WfsClient, ""),
 
-            new XElement(XmlElements.Subscribed, bool.FalseString)
+            new XElement(XmlElements.Subscribed, bool.FalseString),
+
+            new XElement(XmlElements.Precision, 
+                new XAttribute(XmlAttributes.EpsgCode, ""),
+                new XAttribute(XmlAttributes.Decimals, ""),
+                new XAttribute(XmlAttributes.Tolerance, ""))
+
+            //new XAttribute(XmlAttributes.Version, "")
         };
 
         internal static string Id { get; set; }
@@ -34,6 +41,8 @@ namespace CORESubscriber
         internal static long ProviderLastIndex { get; set; }
 
         internal static long SubscriberLastIndex { get; set; }
+
+        public static string Version { get; set; }
 
         internal static void UpdateSettings()
         {
