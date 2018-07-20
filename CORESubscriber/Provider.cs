@@ -20,9 +20,9 @@ namespace CORESubscriber
 
         internal static string ApiUrl { get; set; }
 
-        internal static string GeosynchronizationNamespace = XmlNamespaces.Geosynchronization.NamespaceName;
+        internal static XNamespace GeosynchronizationNamespace = XmlNamespaces.Geosynchronization;
 
-        internal static string ChangelogNamespace = XmlNamespaces.Changelog.NamespaceName;
+        internal static XNamespace ChangelogNamespace = XmlNamespaces.Changelog;
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {

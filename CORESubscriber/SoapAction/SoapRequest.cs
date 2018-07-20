@@ -57,7 +57,7 @@ namespace CORESubscriber.SoapAction
 
             request.Content.Headers.ContentType = new MediaTypeHeaderValue(Config.XmlMediaType);
 
-            request.Headers.Add("SOAPAction", Provider.GeosynchronizationNamespace + "/#" + action);
+            request.Headers.Add("SOAPAction", Provider.GeosynchronizationNamespace.NamespaceName + "/#" + action);
 
             return request;
         }

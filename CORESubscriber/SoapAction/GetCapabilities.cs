@@ -40,15 +40,15 @@ namespace CORESubscriber.SoapAction
 
         private static void SwapGeosynkchronizationVersion()
         {
-            if (Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization.NamespaceName)
+            if (Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization)
             {
-                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization11.NamespaceName;
-                Provider.ChangelogNamespace = XmlNamespaces.Changelog11.NamespaceName;
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization11;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog11;
             }
             else
             {
-                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization.NamespaceName;
-                Provider.ChangelogNamespace = XmlNamespaces.Changelog.NamespaceName;
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog;
             }
         }
 
@@ -72,7 +72,7 @@ namespace CORESubscriber.SoapAction
 
                 datasetElement.Add(Dataset.DefaultElements);
 
-                if(Provider.GeosynchronizationNamespace != XmlNamespaces.Geosynchronization11.NamespaceName) GetVersionAndPrecision(datasetElement);
+                if(Provider.GeosynchronizationNamespace != XmlNamespaces.Geosynchronization11) GetVersionAndPrecision(datasetElement);
 
                 datasetsList.Add(datasetElement);
             }
