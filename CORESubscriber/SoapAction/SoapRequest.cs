@@ -12,7 +12,11 @@ namespace CORESubscriber.SoapAction
     {
         public static XDocument GetSoapContentByAction(string action)
         {
-            return XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
+            var soapContent = XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
+
+            soapContent.Root?.SetAttributeValue(XNamespace.Xmlns + "prod", Provider.GeosynchronizationNamespace.NamespaceName);
+
+            return soapContent;
         }
 
         public static XDocument Send(string action, XDocument requestContent)
@@ -53,7 +57,7 @@ namespace CORESubscriber.SoapAction
 
             request.Content.Headers.ContentType = new MediaTypeHeaderValue(Config.XmlMediaType);
 
-            request.Headers.Add("SOAPAction", XmlNamespaces.Geosynchronization.NamespaceName + "/#" + action);
+            request.Headers.Add("SOAPAction", Provider.GeosynchronizationNamespace.NamespaceName + "/#" + action);
 
             return request;
         }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:prod="http://skjema.geonorge.no/standard/geosynkronisering/1.2/produkt">
   <soapenv:Header/>
   <soapenv:Body>
     <prod:GetChangelogStatus>

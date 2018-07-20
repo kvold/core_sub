@@ -75,7 +75,7 @@ namespace CORESubscriber
             {
                 var changelogXml = XDocument.Parse(fileInfo.OpenText().ReadToEnd());
 
-                foreach (var transaction in changelogXml.Descendants(XmlNamespaces.Changelog + "transactions"))
+                foreach (var transaction in changelogXml.Descendants(Provider.ChangelogNamespace + "transactions").ToList())
                 {
                     transaction.Name = XmlNamespaces.Wfs + "Transaction";
 

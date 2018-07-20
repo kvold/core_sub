@@ -7,14 +7,14 @@ using CORESubscriber.Xml;
 
 namespace CORESubscriber.SoapAction
 {
-    internal class OrderChangelog
+    internal class OrderChangelog2
     {
         public static void Run()
         {
             if (Dataset.OrderedChangelogId != -1) return;
 
             var responseContent =
-                SoapRequest.Send(SoapActions.OrderChangelog, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog)));
+                SoapRequest.Send(SoapActions.OrderChangelog2, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
@@ -41,6 +41,9 @@ namespace CORESubscriber.SoapAction
             orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName).First()
                     .Attribute(XmlAttributes.Count).Value =
                 Config.OrderedChangeCount;
+
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetVersion.LocalName).First()
+                .Value = Dataset.Version;
 
             return orderChangelog;
         }

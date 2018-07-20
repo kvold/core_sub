@@ -31,5 +31,19 @@ namespace CORESubscriber.Xml
         public static XName StartIndex = "startIndex";
 
         public static XName Count = "count";
+
+        public static XName EpsgCode = "epsgCode";
+
+        public static XName Decimals = "decimals";
+
+        public static XName Tolerance = "tolerance";
+
+        public static XName Version = "version";
+
+        public static XName GeosynchronizationNamespace = "geosynchronizationNamespace";
+
+        public static XName ChangelogNamespace = "changelogNamespace";
+
+        public static XName DatasetVersion = "datasetVersion";
     }
 }

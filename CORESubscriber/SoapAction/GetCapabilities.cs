@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using CORESubscriber.Xml;
@@ -13,6 +14,15 @@ namespace CORESubscriber.SoapAction
             var getCapabilities = SoapRequest.GetSoapContentByAction(SoapActions.GetCapabilities);
 
             var responseContent = SoapRequest.Send(SoapActions.GetCapabilities, getCapabilities);
+
+            if (responseContent.Descendants(XmlNamespaces.Soap + XmlElements.Fault.LocalName).Any())
+            {
+                SwapGeosynkchronizationVersion();
+
+                getCapabilities = SoapRequest.GetSoapContentByAction(SoapActions.GetCapabilities);
+
+                responseContent = SoapRequest.Send(SoapActions.GetCapabilities, getCapabilities);
+            }
 
             if (Provider.ConfigFile == null)
                 Provider.ConfigFile = responseContent.Descendants(XmlNamespaces.Ows + XmlElements.Title.LocalName)
@@ -28,12 +38,26 @@ namespace CORESubscriber.SoapAction
             return true;
         }
 
+        private static void SwapGeosynkchronizationVersion()
+        {
+            if (Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization)
+            {
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization11;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog11;
+            }
+            else
+            {
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog;
+            }
+        }
+
         private static IList<XElement> GetDatasets(XContainer result)
         {
             var datasetsList = new List<XElement>();
 
             foreach (var dataset in result
-                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Datasets.LocalName)
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Datasets.LocalName)
                 .Descendants())
             {
                 var datasetElement = new XElement(XmlElements.Dataset);
@@ -48,10 +72,25 @@ namespace CORESubscriber.SoapAction
 
                 datasetElement.Add(Dataset.DefaultElements);
 
+                if(Provider.GeosynchronizationNamespace != XmlNamespaces.Geosynchronization11) GetVersionAndPrecision(datasetElement);
+
                 datasetsList.Add(datasetElement);
             }
 
             return datasetsList;
+        }
+
+        private static void GetVersionAndPrecision(XElement datasetElement)
+        {
+            Dataset.Id = (string) datasetElement.Attribute(XmlAttributes.DatasetId.LocalName);
+
+            var precision = GetPrecision.Run();
+
+            var datasetPrecision = datasetElement.Descendants(XmlElements.Precision).First();
+
+            datasetPrecision.Attribute(XmlAttributes.Tolerance).Value = precision.Tolerance.ToString(CultureInfo.InvariantCulture);
+            datasetPrecision.Attribute(XmlAttributes.Decimals).Value = precision.Decimals;
+            datasetPrecision.Attribute(XmlAttributes.EpsgCode).Value = precision.EpsgCode;
         }
     }
 }

@@ -24,7 +24,12 @@ namespace CORESubscriber
 
             new XElement(XmlElements.WfsClient, ""),
 
-            new XElement(XmlElements.Subscribed, bool.FalseString)
+            new XElement(XmlElements.Subscribed, bool.FalseString),
+
+            new XElement(XmlElements.Precision, 
+                new XAttribute(XmlAttributes.EpsgCode, ""),
+                new XAttribute(XmlAttributes.Decimals, ""),
+                new XAttribute(XmlAttributes.Tolerance, ""))
         };
 
         internal static string Id { get; set; }
@@ -34,6 +39,8 @@ namespace CORESubscriber
         internal static long ProviderLastIndex { get; set; }
 
         internal static long SubscriberLastIndex { get; set; }
+
+        public static string Version { get; set; }
 
         internal static void UpdateSettings()
         {
@@ -56,6 +63,8 @@ namespace CORESubscriber
             OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                 .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
                 .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value);
+
+            Version = subscribed.Parent?.Attribute(XmlAttributes.Version)?.Value;
 
             return OrderedChangelogId == -1;
         }
