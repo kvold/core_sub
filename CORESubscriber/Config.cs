@@ -6,8 +6,6 @@ namespace CORESubscriber
 {
     public class Config
     {
-        public static string Version = XmlNamespaces.Geosynchronization.NamespaceName;
-
         internal const string XmlMediaType = "text/xml";
 
         internal static Dictionary<string, List<string>> Actions = new Dictionary<string, List<string>>

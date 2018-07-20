@@ -17,10 +17,7 @@ namespace CORESubscriber.SoapAction
 
             if (responseContent.Descendants(XmlNamespaces.Soap + XmlElements.Fault.LocalName).Any())
             {
-                // TODO: Handle faults here. For example wrong version of contract etc
-                Config.Version = Config.Version == XmlNamespaces.Geosynchronization.NamespaceName
-                    ? XmlNamespaces.Geosynchronization11.NamespaceName
-                    : XmlNamespaces.Geosynchronization.NamespaceName;
+                SwapGeosynkchronizationVersion();
 
                 getCapabilities = SoapRequest.GetSoapContentByAction(SoapActions.GetCapabilities);
 
@@ -39,6 +36,20 @@ namespace CORESubscriber.SoapAction
             Console.WriteLine("Saved " + datasetsList.Count + " datasets to " + Provider.ConfigFile);
 
             return true;
+        }
+
+        private static void SwapGeosynkchronizationVersion()
+        {
+            if (Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization.NamespaceName)
+            {
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization11.NamespaceName;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog11.NamespaceName;
+            }
+            else
+            {
+                Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization.NamespaceName;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog.NamespaceName;
+            }
         }
 
         private static IList<XElement> GetDatasets(XContainer result)
@@ -61,7 +72,7 @@ namespace CORESubscriber.SoapAction
 
                 datasetElement.Add(Dataset.DefaultElements);
 
-                if(Config.Version != XmlNamespaces.Geosynchronization11.NamespaceName) GetVersionAndPrecision(datasetElement);
+                if(Provider.GeosynchronizationNamespace != XmlNamespaces.Geosynchronization11.NamespaceName) GetVersionAndPrecision(datasetElement);
 
                 datasetsList.Add(datasetElement);
             }

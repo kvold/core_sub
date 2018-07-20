@@ -30,8 +30,6 @@ namespace CORESubscriber
                 new XAttribute(XmlAttributes.EpsgCode, ""),
                 new XAttribute(XmlAttributes.Decimals, ""),
                 new XAttribute(XmlAttributes.Tolerance, ""))
-
-            //new XAttribute(XmlAttributes.Version, "")
         };
 
         internal static string Id { get; set; }

@@ -39,5 +39,9 @@ namespace CORESubscriber.Xml
         public static XName Tolerance = "tolerance";
 
         public static XName Version = "version";
+
+        public static XName GeosynchronizationNamespace = "geosynchronizationNamespace";
+
+        public static XName ChangelogNamespace = "changelogNamespace";
     }
 }

@@ -20,6 +20,9 @@ namespace CORESubscriber
 
         internal static string ApiUrl { get; set; }
 
+        public static string GeosynchronizationNamespace { get; set; }
+
+        public static string ChangelogNamespace { get; set; }
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
@@ -27,7 +30,7 @@ namespace CORESubscriber
                 ? ReadConfigFile()
                 : new XDocument(
                     new XComment(
-                        "Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. In normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."),
+                        "Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. Under normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."),
                     CreateDefaultProvider());
 
             AddDatasetsToDocument(datasetsList, ConfigFileXml);
@@ -54,6 +57,10 @@ namespace CORESubscriber
             User = provider.Attribute(XmlAttributes.User)?.Value;
 
             ApiUrl = provider.Attribute(XmlAttributes.Uri)?.Value;
+
+            GeosynchronizationNamespace = provider.Attribute(XmlAttributes.GeosynchronizationNamespace)?.Value;
+
+            ChangelogNamespace = provider.Attribute(XmlAttributes.ChangelogNamespace)?.Value;
         }
 
         private static XDocument ReadConfigFile()
@@ -107,7 +114,9 @@ namespace CORESubscriber
             {
                 new XAttribute(XmlAttributes.Uri, ApiUrl),
                 new XAttribute(XmlAttributes.User, User),
-                new XAttribute(XmlAttributes.Password, Password)
+                new XAttribute(XmlAttributes.Password, Password),
+                new XAttribute(XmlAttributes.GeosynchronizationNamespace, XmlNamespaces.Geosynchronization),
+                new XAttribute(XmlAttributes.ChangelogNamespace, XmlNamespaces.Changelog)
             });
 
             return providerElement;
