@@ -10,17 +10,17 @@ namespace CORESubscriber.SoapAction
         {
             var getPrecision = SoapRequest.GetSoapContentByAction(SoapActions.GetPrecision);
 
-            getPrecision.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
+            getPrecision.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
             var returnValue = SoapRequest.Send(SoapActions.GetPrecision, getPrecision)
-                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Return.LocalName).First();
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First();
 
             var precision = new Precision
             {
-                Tolerance = Convert.ToDouble(returnValue.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.Tolerance.LocalName).First().Value),
-                EpsgCode = returnValue.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.EpsgCode.LocalName).First().Value,
-                Decimals = returnValue.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.Decimals.LocalName).First().Value
+                Tolerance = Convert.ToDouble(returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Tolerance.LocalName).First().Value),
+                EpsgCode = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.EpsgCode.LocalName).First().Value,
+                Decimals = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Decimals.LocalName).First().Value
             };
 
             return precision;

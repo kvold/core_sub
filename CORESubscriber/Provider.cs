@@ -20,9 +20,9 @@ namespace CORESubscriber
 
         internal static string ApiUrl { get; set; }
 
-        public static string GeosynchronizationNamespace { get; set; }
+        internal static string GeosynchronizationNamespace = XmlNamespaces.Geosynchronization.NamespaceName;
 
-        public static string ChangelogNamespace { get; set; }
+        internal static string ChangelogNamespace = XmlNamespaces.Changelog.NamespaceName;
 
         internal static void Save(IEnumerable<XElement> datasetsList)
         {
@@ -115,8 +115,8 @@ namespace CORESubscriber
                 new XAttribute(XmlAttributes.Uri, ApiUrl),
                 new XAttribute(XmlAttributes.User, User),
                 new XAttribute(XmlAttributes.Password, Password),
-                new XAttribute(XmlAttributes.GeosynchronizationNamespace, XmlNamespaces.Geosynchronization),
-                new XAttribute(XmlAttributes.ChangelogNamespace, XmlNamespaces.Changelog)
+                new XAttribute(XmlAttributes.GeosynchronizationNamespace, GeosynchronizationNamespace),
+                new XAttribute(XmlAttributes.ChangelogNamespace, ChangelogNamespace)
             });
 
             return providerElement;

@@ -11,7 +11,7 @@ namespace CORESubscriber.SoapAction
         {
             var getChangelogStatus = SoapRequest.GetSoapContentByAction(SoapActions.GetChangelogStatus);
 
-            getChangelogStatus.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName)
+            getChangelogStatus.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName)
                     .First().Value =
                 Dataset.OrderedChangelogId.ToString();
 
@@ -23,7 +23,7 @@ namespace CORESubscriber.SoapAction
 
                 var responseContent = SoapRequest.Send(SoapActions.GetChangelogStatus, getChangelogStatus);
 
-                var returnValue = responseContent.Descendants(XmlNamespaces.Geosynchronization + "return").First()
+                var returnValue = responseContent.Descendants(Provider.GeosynchronizationNamespace + "return").First()
                     .Value;
 
                 Console.WriteLine("Query " + queryCounter + ": changelog with ID " + Dataset.OrderedChangelogId +

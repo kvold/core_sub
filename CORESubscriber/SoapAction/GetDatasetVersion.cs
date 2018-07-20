@@ -10,11 +10,11 @@ namespace CORESubscriber.SoapAction
         {
             var getDatasetVersion = SoapRequest.GetSoapContentByAction(SoapActions.GetDatasetVersion);
 
-            getDatasetVersion.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
+            getDatasetVersion.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
             return SoapRequest.Send(SoapActions.GetDatasetVersion, getDatasetVersion)
-                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Return.LocalName).First().Value;
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First().Value;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace CORESubscriber.SoapAction
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
-                    .Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.ChangelogId.LocalName).First().Value);
+                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value);
 
             Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                     .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
@@ -31,14 +31,14 @@ namespace CORESubscriber.SoapAction
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlElements.Order.LocalName).First()
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName).First()
                     .Attribute(XmlAttributes.StartIndex).Value =
                 (Dataset.SubscriberLastIndex + 1).ToString();
 
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlAttributes.DatasetId.LocalName).First()
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            orderChangelog.Descendants(XmlNamespaces.Geosynchronization + XmlElements.Order.LocalName).First()
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName).First()
                     .Attribute(XmlAttributes.Count).Value =
                 Config.OrderedChangeCount;
 
