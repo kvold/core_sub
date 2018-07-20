@@ -64,6 +64,8 @@ namespace CORESubscriber
                 .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
                 .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value);
 
+            Version = subscribed.Parent?.Attribute(XmlAttributes.Version)?.Value;
+
             return OrderedChangelogId == -1;
         }
     }

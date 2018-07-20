@@ -70,7 +70,7 @@ namespace CORESubscriber
         {
             Provider.ConfigFile = args[1];
 
-            if (args.Count > 1) Config.DownloadFolder = args[2];
+            if (args.Count > 2) Config.DownloadFolder = args[2];
 
             Provider.ReadSettings();
         }

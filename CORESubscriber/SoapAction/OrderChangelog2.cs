@@ -14,7 +14,7 @@ namespace CORESubscriber.SoapAction
             if (Dataset.OrderedChangelogId != -1) return;
 
             var responseContent =
-                SoapRequest.Send(SoapActions.OrderChangelog, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
+                SoapRequest.Send(SoapActions.OrderChangelog2, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
 
             Dataset.OrderedChangelogId =
                 Convert.ToInt64(responseContent
@@ -42,7 +42,7 @@ namespace CORESubscriber.SoapAction
                     .Attribute(XmlAttributes.Count).Value =
                 Config.OrderedChangeCount;
 
-            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Version.LocalName).First()
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetVersion.LocalName).First()
                 .Value = Dataset.Version;
 
             return orderChangelog;

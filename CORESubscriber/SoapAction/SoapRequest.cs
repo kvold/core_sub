@@ -14,7 +14,7 @@ namespace CORESubscriber.SoapAction
         {
             var soapContent = XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
 
-            soapContent.Root?.SetAttributeValue(XNamespace.Xmlns + "prod", Provider.GeosynchronizationNamespace);
+            soapContent.Root?.SetAttributeValue(XNamespace.Xmlns + "prod", Provider.GeosynchronizationNamespace.NamespaceName);
 
             return soapContent;
         }

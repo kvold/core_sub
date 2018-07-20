@@ -43,5 +43,7 @@ namespace CORESubscriber.Xml
         public static XName GeosynchronizationNamespace = "geosynchronizationNamespace";
 
         public static XName ChangelogNamespace = "changelogNamespace";
+
+        public static XName DatasetVersion = "datasetVersion";
     }
 }
