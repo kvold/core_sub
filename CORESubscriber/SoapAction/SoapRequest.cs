@@ -12,9 +12,12 @@ namespace CORESubscriber.SoapAction
     {
         public static XDocument GetSoapContentByAction(string action)
         {
-            var soapContent = XDocument.Parse(File.ReadAllText("Queries/" + action + ".xml"));
+            var actionText = File.ReadAllText("Queries/" + action + ".xml");
 
-            soapContent.Root?.SetAttributeValue(XNamespace.Xmlns + "prod", Provider.GeosynchronizationNamespace.NamespaceName);
+            actionText = actionText.Replace(XmlNamespaces.Geosynchronization.NamespaceName,
+                Provider.GeosynchronizationNamespace.NamespaceName);
+
+            var soapContent = XDocument.Parse(actionText);
 
             return soapContent;
         }
