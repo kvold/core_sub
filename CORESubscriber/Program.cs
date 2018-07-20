@@ -93,7 +93,7 @@ namespace CORESubscriber
                 if (Dataset.ReadVariables(subscribed))
                     if (!GetLastIndex.Run()) continue;
 
-                if(string.IsNullOrEmpty(Dataset.Version)) OrderChangelog.Run();
+                if(Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization11) OrderChangelog.Run();
                 else OrderChangelog2.Run();
 
                 GetChangelogStatus.Run();
