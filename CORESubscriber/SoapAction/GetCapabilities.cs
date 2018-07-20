@@ -57,7 +57,7 @@ namespace CORESubscriber.SoapAction
             var datasetsList = new List<XElement>();
 
             foreach (var dataset in result
-                .Descendants(XmlNamespaces.Geosynchronization + XmlElements.Datasets.LocalName)
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Datasets.LocalName)
                 .Descendants())
             {
                 var datasetElement = new XElement(XmlElements.Dataset);
