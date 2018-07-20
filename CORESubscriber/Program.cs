@@ -83,7 +83,7 @@ namespace CORESubscriber
 
             Provider.Password = args[3];
 
-            if (args.Count > 3) Provider.ConfigFile = args[4];
+            if (args.Count > 4) Provider.ConfigFile = args[4];
         }
 
         private static void SynchronzeSubscribedDatasets()
