@@ -16,9 +16,11 @@ namespace CORESubscriber.SoapAction
             var returnValue = SoapRequest.Send(SoapActions.GetPrecision, getPrecision)
                 .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First();
 
+            var tolerance = double.Parse(returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Tolerance.LocalName).First().Value, System.Globalization.CultureInfo.InvariantCulture);
+
             var precision = new Precision
             {
-                Tolerance = Convert.ToDouble(returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Tolerance.LocalName).First().Value),
+                Tolerance = tolerance,
                 EpsgCode = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.EpsgCode.LocalName).First().Value,
                 Decimals = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Decimals.LocalName).First().Value
             };
