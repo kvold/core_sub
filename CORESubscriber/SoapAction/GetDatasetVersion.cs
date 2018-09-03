@@ -14,7 +14,7 @@ namespace CORESubscriber.SoapAction
                 .Value = Dataset.Id;
 
             return SoapRequest.Send(SoapActions.GetDatasetVersion, getDatasetVersion)
-                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First().Value;
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First().Value.Trim();
         }
     }
 }
