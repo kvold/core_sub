@@ -88,9 +88,21 @@ namespace CORESubscriber.SoapAction
 
             var datasetPrecision = datasetElement.Descendants(XmlElements.Precision).First();
 
-            datasetPrecision.Attribute(XmlAttributes.Tolerance).Value = precision.Tolerance.ToString(CultureInfo.InvariantCulture);
-            datasetPrecision.Attribute(XmlAttributes.Decimals).Value = precision.Decimals;
-            datasetPrecision.Attribute(XmlAttributes.EpsgCode).Value = precision.EpsgCode;
+            AddValue(datasetPrecision, XmlAttributes.Tolerance,
+                precision.Tolerance.ToString(CultureInfo.InvariantCulture));
+            AddValue(datasetPrecision, XmlAttributes.Decimals,
+                precision.Decimals);
+            AddValue(datasetPrecision, XmlAttributes.EpsgCode,
+                precision.EpsgCode);
+
+            var version = GetDatasetVersion.Run();
+
+            AddValue(datasetElement, XmlAttributes.Version, version);
+        }
+
+        private static void AddValue(XElement element, XName attribute, string value)
+        {
+            element.Attribute(attribute).Value = value;
         }
     }
 }
