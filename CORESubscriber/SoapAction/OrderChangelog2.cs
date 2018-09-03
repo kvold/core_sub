@@ -20,6 +20,8 @@ namespace CORESubscriber.SoapAction
                 Convert.ToInt64(responseContent
                     .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value);
 
+            if(Dataset.OrderedChangelogId == -1) throw new Exception("Provider datasetVersion differs from subscriber.");
+
             Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                     .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
                     .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId)
