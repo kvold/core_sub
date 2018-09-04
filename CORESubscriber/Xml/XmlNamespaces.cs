@@ -13,9 +13,6 @@ namespace CORESubscriber.Xml
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/produkt";
 
         internal static readonly XNamespace Changelog =
-            "http://skjema.geonorge.no/standard/geosynkronisering/1.2/endringslogg";
-
-        internal static readonly XNamespace Changelog11 =
             "http://skjema.geonorge.no/standard/geosynkronisering/1.1/endringslogg";
 
         internal static readonly XNamespace Wfs = "http://www.opengis.net/wfs/2.0";
