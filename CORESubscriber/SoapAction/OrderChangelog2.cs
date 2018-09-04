@@ -11,22 +11,22 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            if (Dataset.OrderedChangelogId != -1) return;
+            if (Dataset.OrderedChangelogId != "-1") return;
 
             var responseContent =
                 SoapRequest.Send(SoapActions.OrderChangelog2, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
 
             Dataset.OrderedChangelogId =
-                Convert.ToInt64(responseContent
-                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value);
+                responseContent
+                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
 
-            if(Dataset.OrderedChangelogId == -1) throw new Exception("Provider datasetVersion differs from subscriber.");
+            if(Dataset.OrderedChangelogId == "-1") throw new Exception("Provider datasetVersion differs from subscriber.");
 
             Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                     .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
                     .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId)
                     .Value =
-                Dataset.OrderedChangelogId.ToString();
+                Dataset.OrderedChangelogId;
 
             Provider.Save();
         }

@@ -11,14 +11,14 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            if (Dataset.OrderedChangelogId != -1) return;
+            if (Dataset.OrderedChangelogId != "-1") return;
 
             var responseContent =
                 SoapRequest.Send(SoapActions.OrderChangelog, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog)));
 
             Dataset.OrderedChangelogId =
-                Convert.ToInt64(responseContent
-                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value);
+                responseContent
+                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
 
             Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                     .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
