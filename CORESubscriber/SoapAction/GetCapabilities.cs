@@ -43,7 +43,7 @@ namespace CORESubscriber.SoapAction
             if (Provider.GeosynchronizationNamespace == XmlNamespaces.Geosynchronization)
             {
                 Provider.GeosynchronizationNamespace = XmlNamespaces.Geosynchronization11;
-                Provider.ChangelogNamespace = XmlNamespaces.Changelog11;
+                Provider.ChangelogNamespace = XmlNamespaces.Changelog;
             }
             else
             {

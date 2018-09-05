@@ -34,7 +34,7 @@ namespace CORESubscriber
 
         internal static string Id { get; set; }
 
-        internal static long OrderedChangelogId { get; set; }
+        internal static string OrderedChangelogId { get; set; }
 
         internal static long ProviderLastIndex { get; set; }
 
@@ -44,7 +44,7 @@ namespace CORESubscriber
 
         internal static void UpdateSettings()
         {
-            OrderedChangelogId = -1;
+            OrderedChangelogId = "-1";
 
             Provider.ConfigFileXml.Descendants()
                 .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
@@ -60,13 +60,13 @@ namespace CORESubscriber
             SubscriberLastIndex =
                 Convert.ToInt64(subscribed.Parent?.Attribute(XmlAttributes.SubscriberLastIndex)?.Value);
 
-            OrderedChangelogId = Convert.ToInt64(Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
+            OrderedChangelogId = Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                 .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id)
-                .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value);
+                .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value;
 
             Version = subscribed.Parent?.Attribute(XmlAttributes.Version)?.Value;
 
-            return OrderedChangelogId == -1;
+            return OrderedChangelogId == "-1";
         }
     }
 }
