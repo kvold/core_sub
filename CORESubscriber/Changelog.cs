@@ -79,6 +79,8 @@ namespace CORESubscriber
                 {
                     transaction.Name = XmlNamespaces.Wfs + "Transaction";
 
+                    transaction.SetAttributeValue("version","2.0.0");
+
                     Send(new XDocument(transaction));
                 }
             }
