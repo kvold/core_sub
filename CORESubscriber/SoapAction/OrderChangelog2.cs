@@ -11,9 +11,10 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            if (!Dataset.ChangelogIdIsDefault()) return;
+            // TODO: Implement pausing in transactions
+            //if (!Dataset.ChangelogIdIsDefault()) return;
 
-            Dataset.SetOrderedChangelogId(GetOrderedChangelogIdFromResponseContent());
+            Dataset.SetOrderedChangelogId(OrderChangelogFromProvider());
 
             if (Dataset.ChangelogIdIsDefault())
                 throw new Exception("Provider datasetVersion differs from subscriber.");
@@ -22,7 +23,7 @@ namespace CORESubscriber.SoapAction
         }
 
 
-        private static string GetOrderedChangelogIdFromResponseContent()
+        private static string OrderChangelogFromProvider()
         {
             return GetResponseContent()
                 .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
