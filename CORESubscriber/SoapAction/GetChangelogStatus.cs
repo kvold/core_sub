@@ -31,6 +31,7 @@ namespace CORESubscriber.SoapAction
 
                 switch (returnValue)
                 {
+                    case "queued":
                     case "working":
                         Task.Delay(Config.StatusQueryDelay).Wait();
                         continue;

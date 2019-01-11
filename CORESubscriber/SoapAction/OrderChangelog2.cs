@@ -11,43 +11,73 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            if (Dataset.OrderedChangelogId != "-1") return;
+            if (!Dataset.ChangelogIdIsDefault()) return;
 
-            var responseContent =
-                SoapRequest.Send(SoapActions.OrderChangelog2, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
+            Dataset.SetOrderedChangelogId(GetOrderedChangelogIdFromResponseContent());
 
-            Dataset.OrderedChangelogId =
-                responseContent
-                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
+            if (Dataset.ChangelogIdIsDefault())
+                throw new Exception("Provider datasetVersion differs from subscriber.");
 
-            if(Dataset.OrderedChangelogId == "-1") throw new Exception("Provider datasetVersion differs from subscriber.");
+            Dataset.SetAbortedChangelog(Dataset.OrderedChangelogId);
+        }
 
-            Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
-                    .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
-                    .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId)
-                    .Value =
-                Dataset.OrderedChangelogId;
 
-            Provider.Save();
+        private static string GetOrderedChangelogIdFromResponseContent()
+        {
+            return GetResponseContent()
+                .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
+        }
+
+        private static XDocument GetResponseContent()
+        {
+            return SoapRequest.Send(SoapActions.OrderChangelog2,
+                SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog2)));
         }
 
         private static XDocument SetOrderVariables(XDocument orderChangelog)
         {
-            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName).First()
-                    .Attribute(XmlAttributes.StartIndex).Value =
-                (Dataset.SubscriberLastIndex + 1).ToString();
+            SetSubscriberLastIndex(orderChangelog);
 
-            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
-                .Value = Dataset.Id;
+            SetDatasetId(orderChangelog);
 
-            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName).First()
-                    .Attribute(XmlAttributes.Count).Value =
-                Config.OrderedChangeCount;
+            SetOrderedChangeCount(orderChangelog);
 
-            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetVersion.LocalName).First()
-                .Value = Dataset.Version;
+            SetDatasetVersion(orderChangelog);
 
             return orderChangelog;
+        }
+
+        private static void SetDatasetVersion(XContainer orderChangelog)
+        {
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetVersion.LocalName)
+                .First()
+                .Value = Dataset.Version;
+        }
+
+        private static void SetOrderedChangeCount(XContainer orderChangelog)
+        {
+            GetOrderLocalname(orderChangelog)
+                    .Attribute(XmlAttributes.Count).Value =
+                Config.OrderedChangeCount;
+        }
+
+        private static void SetDatasetId(XContainer orderChangelog)
+        {
+            orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
+                .Value = Dataset.Id;
+        }
+
+        private static void SetSubscriberLastIndex(XContainer orderChangelog)
+        {
+            GetOrderLocalname(orderChangelog)
+                    .Attribute(XmlAttributes.StartIndex).Value =
+                (Dataset.SubscriberLastIndex + 1).ToString();
+        }
+
+        private static XElement GetOrderLocalname(XContainer orderChangelog)
+        {
+            return orderChangelog.Descendants(Provider.GeosynchronizationNamespace + XmlElements.Order.LocalName)
+                .First();
         }
     }
 }

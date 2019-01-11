@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Xml.Linq;
 using CORESubscriber.Xml;
 
 namespace CORESubscriber.SoapAction
@@ -8,24 +8,45 @@ namespace CORESubscriber.SoapAction
     {
         public static Precision Run()
         {
-            var getPrecision = SoapRequest.GetSoapContentByAction(SoapActions.GetPrecision);
+            var returnValue = GetReturnValue();
 
-            getPrecision.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
+            return new Precision
+            {
+                Tolerance = GetTolerance(returnValue),
+                EpsgCode = GetEpsgCode(returnValue),
+                Decimals = GetDecimals(returnValue)
+            };
+        }
+
+        private static double GetTolerance(XContainer returnValue)
+        {
+            return double.Parse(returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Tolerance.LocalName).First().Value, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private static XElement GetReturnValue()
+        {
+            return SoapRequest.Send(SoapActions.GetPrecision, CreateGetPrecisionDocument())
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First();
+        }
+
+        private static XDocument CreateGetPrecisionDocument()
+        {
+            var getPrecisionDocument = SoapRequest.GetSoapContentByAction(SoapActions.GetPrecision);
+
+            getPrecisionDocument.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            var returnValue = SoapRequest.Send(SoapActions.GetPrecision, getPrecision)
-                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First();
+            return getPrecisionDocument;
+        }
 
-            var tolerance = double.Parse(returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Tolerance.LocalName).First().Value, System.Globalization.CultureInfo.InvariantCulture);
+        private static string GetDecimals(XContainer returnValue)
+        {
+            return returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Decimals.LocalName).First().Value;
+        }
 
-            var precision = new Precision
-            {
-                Tolerance = tolerance,
-                EpsgCode = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.EpsgCode.LocalName).First().Value,
-                Decimals = returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.Decimals.LocalName).First().Value
-            };
-
-            return precision;
+        private static string GetEpsgCode(XContainer returnValue)
+        {
+            return returnValue.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.EpsgCode.LocalName).First().Value;
         }
     }
 

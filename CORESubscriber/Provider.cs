@@ -40,10 +40,7 @@ namespace CORESubscriber
 
         internal static void Save()
         {
-            using (var fileStream = new FileStream(ConfigFile, FileMode.OpenOrCreate))
-            {
-                ConfigFileXml.Save(fileStream);
-            }
+            using (var fileStream = new FileStream(ConfigFile, FileMode.Create)) ConfigFileXml.Save(fileStream);
         }
 
         internal static void ReadSettings()
