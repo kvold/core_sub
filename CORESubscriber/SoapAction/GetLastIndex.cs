@@ -8,18 +8,23 @@ namespace CORESubscriber.SoapAction
     {
         public static bool Run()
         {
-            var getLastIndex = SoapRequest.GetSoapContentByAction(SoapActions.GetLastIndex);
+            var xDocument = SoapRequest.GetSoapContentByAction(SoapActions.GetLastIndex);
 
-            getLastIndex.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
+            xDocument.Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.DatasetId.LocalName).First()
                 .Value = Dataset.Id;
 
-            Dataset.ProviderLastIndex = Convert.ToInt64(SoapRequest.Send(SoapActions.GetLastIndex, getLastIndex)
-                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First().Value);
+            Dataset.SetProviderLastIndex(GetLastIndexFromProvider(xDocument));
 
             Console.WriteLine("Provider LastIndex: " + Dataset.ProviderLastIndex + ", Subscriber Lastindex: " +
                               Dataset.SubscriberLastIndex);
 
             return Dataset.ProviderLastIndex > Dataset.SubscriberLastIndex;
+        }
+
+        private static long GetLastIndexFromProvider(System.Xml.Linq.XDocument xDocument)
+        {
+            return Convert.ToInt64(SoapRequest.Send(SoapActions.GetLastIndex, xDocument)
+                .Descendants(Provider.GeosynchronizationNamespace + XmlElements.Return.LocalName).First().Value);
         }
     }
 }
