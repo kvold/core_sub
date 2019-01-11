@@ -57,6 +57,8 @@ namespace CORESubscriber
 
         private static void SetSubscriberLastIndexToProviderLastIndex()
         {
+            if (ProviderLastIndex < 1) return;
+
             GetDatasetConfig().Attribute(XmlAttributes.SubscriberLastIndex).Value = ProviderLastIndex.ToString();
 
             Provider.Save();
@@ -174,6 +176,11 @@ namespace CORESubscriber
                 orderedChangelogId;
 
             Provider.Save();
+        }
+
+        public static void SetProviderLastIndex(long providerLastIndex)
+        {
+            ProviderLastIndex = providerLastIndex;
         }
     }
 }
