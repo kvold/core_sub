@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -17,94 +16,157 @@ namespace CORESubscriber
     {
         private static string DataFolder { get; set; }
 
-        private static string WfsClient { get; set; }
+        private static int Transaction { get; set; }
 
         internal static async Task Get(string downloadUrl)
         {
-            string zipFile;
+            var zipFilePath = GetZipFilePath(downloadUrl);
 
-            using (var client = new HttpClient())
-            {
-                var byteArray = Encoding.ASCII.GetBytes(Provider.User + ":" + Provider.Password);
+            await DownloadZipFileDownload(downloadUrl, zipFilePath);
 
-                client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+            ExtractFilesToDatafolder(zipFilePath);
+        }
 
-                var result = client.GetAsync(downloadUrl).Result;
-
-                if (!result.IsSuccessStatusCode)
-                    throw new FileNotFoundException("Statuscode when trying to download from " +
-                                                    downloadUrl + " was " + result.StatusCode);
-
-                var changelogFileName = downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
-
-                zipFile = Config.DownloadFolder + "/" + changelogFileName;
-
-                DataFolder = Config.DownloadFolder + "/" + changelogFileName.Split(".")[0];
-
-                using (var fs = new FileStream(zipFile, FileMode.Create))
-                {
-                    await result.Content.CopyToAsync(fs);
-                }
-            }
-
+        private static void ExtractFilesToDatafolder(string zipFilePath)
+        {
             if (Directory.Exists(DataFolder)) Directory.Delete(DataFolder, true);
 
-            ZipFile.ExtractToDirectory(zipFile, DataFolder);
+            ZipFile.ExtractToDirectory(zipFilePath, DataFolder, Encoding.UTF8);
+        }
+
+        private static async Task DownloadZipFileDownload(string downloadUrl, string zipFilePath)
+        {
+            var result = GetResult(downloadUrl);
+
+            if (!result.IsSuccessStatusCode)
+                throw new FileNotFoundException(
+                    $"Statuscode when trying to download from {downloadUrl} was {result.StatusCode}");
+
+            await SaveZipFile(zipFilePath, result);
+
         }
 
         internal static void Execute()
         {
-            WfsClient = Provider.ConfigFileXml.Descendants()
-                .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
-                .Descendants(XmlElements.WfsClient).First()
-                .Value;
-
-            if (WfsClient == "") throw new Exception("No wfsClient given for dataset " + Dataset.Id);
-
             var directoryInfo = new DirectoryInfo(DataFolder);
 
-            foreach (var directory in directoryInfo.GetDirectories()) ReadFiles(directory.GetFiles());
+            directoryInfo.GetDirectories().ToList().ForEach(ReadFiles);
 
-            ReadFiles(directoryInfo.GetFiles());
+            ReadFiles(directoryInfo);
+
+            Dataset.ResetAbortedChangelog();
         }
 
-        private static void ReadFiles(IEnumerable<FileInfo> files)
+        private static void ReadFiles(DirectoryInfo directoryInfo)
         {
-            foreach (var fileInfo in files)
-            {
-                var changelogXml = XDocument.Parse(fileInfo.OpenText().ReadToEnd());
+            directoryInfo.GetDirectories().ToList().ForEach(directory =>
+                directory.GetFiles().ToList().ForEach(DoTransactions));
+        }
 
-                foreach (var transaction in changelogXml.Descendants(Provider.ChangelogNamespace + "transactions").ToList())
-                {
-                    transaction.Name = XmlNamespaces.Wfs + "Transaction";
+        private static XDocument GetChangelogXml(FileInfo fileInfo)
+        {
+            return XDocument.Parse(fileInfo.OpenText().ReadToEnd());
+        }
 
-                    transaction.SetAttributeValue("version","2.0.0");
+        private static string GetEndIndex(XContainer changeLogXml)
+        {
+            return changeLogXml.Descendants().Attributes(XmlAttributes.EndIndex).First().Value;
+        }
 
-                    Send(new XDocument(transaction));
-                }
-            }
+        private static void DoTransactions(FileInfo fileInfo)
+        {
+            var changelogXml = GetChangelogXml(fileInfo);
+
+            Dataset.SetEndindex(GetEndIndex(changelogXml));
+
+            changelogXml.Descendants(Provider.ChangelogNamespace + "transactions")
+                .ToList().ForEach(PrepareAndSendTransaction);
+        }
+
+        private static void PrepareAndSendTransaction(XElement transaction)
+        {
+            Send(SetTransactionValues(transaction));
+
+            Dataset.SetTransaction(Transaction++.ToString());
+        }
+
+        private static XDocument SetTransactionValues(XElement transaction)
+        {
+            transaction.Name = XmlNamespaces.Wfs + "Transaction";
+
+            transaction.SetAttributeValue("version", "2.0.0");
+
+            return new XDocument(transaction);
         }
 
         private static void Send(XNode transactionDocument)
         {
             using (var client = new HttpClient())
             {
-                var httpContent = new StringContent(transactionDocument.ToString(), Encoding.UTF8, Config.XmlMediaType);
-
-                var response = client.PostAsync(WfsClient, httpContent);
+                var response = client.PostAsync(Provider.GetWfsClient(), GetHttpContent(transactionDocument));
 
                 if (!response.Result.IsSuccessStatusCode)
-                {
-                    var errorMessage = response.Result.Content.ReadAsStringAsync().Result;
+                    throw new TransactionAbortedException(
+                        $"Transaction failed. Message from WFS-server: \r\n{GetResponseErrorMessage(response)}");
 
-                    throw new TransactionAbortedException("Transaction failed. Message from WFS-server: \r\n" +
-                                                          errorMessage);
-                }
-
-                Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result)
-                    .Descendants(XmlNamespaces.Wfs + "TransactionSummary").First().ToString());
+                WriteTransactionSummaryToConsole(response);
             }
+        }
+
+        private static StringContent GetHttpContent(XNode transactionDocument)
+        {
+            return new StringContent(transactionDocument.ToString(), Encoding.UTF8, Config.XmlMediaType);
+        }
+
+        private static string GetResponseErrorMessage(Task<HttpResponseMessage> response)
+        {
+            return response.Result.Content.ReadAsStringAsync().Result;
+        }
+
+        private static void WriteTransactionSummaryToConsole(Task<HttpResponseMessage> response)
+        {
+            Console.WriteLine(XDocument.Parse(response.Result.Content.ReadAsStringAsync().Result)
+                .Descendants(XmlNamespaces.Wfs + "TransactionSummary").First().ToString());
+        }
+
+        private static async Task SaveZipFile(string zipFilePath, HttpResponseMessage result)
+        {
+            using (var fs = new FileStream(zipFilePath, FileMode.Create)) await result.Content.CopyToAsync(fs);
+
+            Dataset.SetChangelogPath(DataFolder);
+        }
+
+        private static string GetZipFilePath(string downloadUrl)
+        {
+            var changelogFileName = GetChangelogFileNameFromDownloadUrl(downloadUrl);
+
+            SetDataFolder(changelogFileName);
+
+            return Config.DownloadFolder + "/" + changelogFileName;
+        }
+
+        private static void SetDataFolder(string changelogFileName)
+        {
+            DataFolder = Config.DownloadFolder + "/" + changelogFileName.Split(".")[0];
+        }
+
+        private static string GetChangelogFileNameFromDownloadUrl(string downloadUrl)
+        {
+            return downloadUrl.Split('/')[downloadUrl.Split('/').Length - 1];
+        }
+
+        private static HttpResponseMessage GetResult(string downloadUrl)
+        {
+            using (var client = SetCredentials(new HttpClient())) return client.GetAsync(downloadUrl).Result;
+        }
+
+        private static HttpClient SetCredentials(HttpClient client)
+        {
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic",
+                    Convert.ToBase64String(Encoding.ASCII.GetBytes(Provider.User + ":" + Provider.Password)));
+
+            return client;
         }
     }
 }
