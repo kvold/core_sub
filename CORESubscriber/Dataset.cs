@@ -87,33 +87,38 @@ namespace CORESubscriber
 
         private static string GetAbortedChangelogId()
         {
-            return GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).Attribute(XmlAttributes.ChangelogId).Value;
+            return GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).Attribute(XmlAttributes.ChangelogId)
+                .Value;
         }
 
         public static void SetChangelogPath(string dataFolder)
         {
-            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogPath, dataFolder);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .SetAttributeValue(XmlAttributes.ChangelogPath, dataFolder);
 
             Provider.Save();
         }
 
         public static void SetEndindex(string endIndex)
         {
-            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.EndIndex, endIndex);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .SetAttributeValue(XmlAttributes.EndIndex, endIndex);
 
             Provider.Save();
         }
 
         public static void SetTransaction(string transaction)
         {
-            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.Transaction, transaction);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .SetAttributeValue(XmlAttributes.Transaction, transaction);
 
             Provider.Save();
         }
 
         private static void SetAbortedchangelogToChangelogId()
         {
-            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogId, ChangelogIdDefaultValue);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .SetAttributeValue(XmlAttributes.ChangelogId, ChangelogIdDefaultValue);
 
             Provider.Save();
         }
@@ -126,7 +131,7 @@ namespace CORESubscriber
         private static XElement GetDatasetConfig()
         {
             return Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
-                            .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id);
+                .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id);
         }
 
         public static void ResetAbortedChangelog()
@@ -142,7 +147,8 @@ namespace CORESubscriber
         {
             OrderedChangelogId = orderedChangelogId;
 
-            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogId, OrderedChangelogId);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .SetAttributeValue(XmlAttributes.ChangelogId, OrderedChangelogId);
 
             Provider.Save();
         }
