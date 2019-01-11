@@ -166,5 +166,14 @@ namespace CORESubscriber
         {
             return OrderedChangelogId == ChangelogIdDefaultValue;
         }
+
+        public static void SetAbortedChangelog(string orderedChangelogId)
+        {
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).Attribute(XmlAttributes.ChangelogId)
+                    .Value =
+                orderedChangelogId;
+
+            Provider.Save();
+        }
     }
 }

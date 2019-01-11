@@ -18,8 +18,7 @@ namespace CORESubscriber.SoapAction
             if (Dataset.ChangelogIdIsDefault())
                 throw new Exception("Provider datasetVersion differs from subscriber.");
 
-            Provider.SetAbortedChangelog(Dataset.OrderedChangelogId);
-
+            Dataset.SetAbortedChangelog(Dataset.OrderedChangelogId);
         }
 
 
