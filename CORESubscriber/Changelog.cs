@@ -103,7 +103,7 @@ namespace CORESubscriber
         {
             using (var client = new HttpClient())
             {
-                var response = client.PostAsync(Provider.GetWfsClient(), GetHttpContent(transactionDocument));
+                var response = client.PostAsync(Dataset.GetWfsClient(), GetHttpContent(transactionDocument));
 
                 if (!response.Result.IsSuccessStatusCode)
                     throw new TransactionAbortedException(

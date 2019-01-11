@@ -26,7 +26,7 @@ namespace CORESubscriber
 
             new XElement(XmlElements.Subscribed, bool.FalseString),
 
-            new XElement(XmlElements.Precision, 
+            new XElement(XmlElements.Precision,
                 new XAttribute(XmlAttributes.EpsgCode, ""),
                 new XAttribute(XmlAttributes.Decimals, ""),
                 new XAttribute(XmlAttributes.Tolerance, ""))
@@ -55,13 +55,6 @@ namespace CORESubscriber
             Provider.Save();
         }
 
-        private static void SetAbortedchangelogToChangelogId()
-        {
-            GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().SetAttributeValue(XmlAttributes.ChangelogId, ChangelogIdDefaultValue);
-
-            Provider.Save();
-        }
-
         private static void SetSubscriberLastIndexToProviderLastIndex()
         {
             GetDatasetConfig().Attribute(XmlAttributes.SubscriberLastIndex).Value = ProviderLastIndex.ToString();
@@ -74,7 +67,7 @@ namespace CORESubscriber
             Id = subscribed.Parent?.Attribute(XmlAttributes.DatasetId)?.Value;
 
             SubscriberLastIndex = GetSubscriberLastIndex(subscribed);
-              
+
             OrderedChangelogId = GetAbortedChangelogId();
 
             Version = GetVersion(subscribed);
@@ -94,33 +87,46 @@ namespace CORESubscriber
 
         private static string GetAbortedChangelogId()
         {
-            return GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId).Value;
+            return GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).Attribute(XmlAttributes.ChangelogId).Value;
         }
 
         public static void SetChangelogPath(string dataFolder)
         {
-            GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().SetAttributeValue(XmlAttributes.ChangelogPath, dataFolder);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogPath, dataFolder);
 
             Provider.Save();
         }
 
         public static void SetEndindex(string endIndex)
         {
-            GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().SetAttributeValue(XmlAttributes.EndIndex, endIndex);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.EndIndex, endIndex);
 
             Provider.Save();
         }
 
         public static void SetTransaction(string transaction)
         {
-            GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().SetAttributeValue(XmlAttributes.Transaction, transaction);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.Transaction, transaction);
 
             Provider.Save();
         }
 
+        private static void SetAbortedchangelogToChangelogId()
+        {
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogId, ChangelogIdDefaultValue);
+
+            Provider.Save();
+        }
+
+        private static XElement GetDatasetConfigFirstDescendant(XName descendant)
+        {
+            return GetDatasetConfig().Descendants(descendant).First();
+        }
+
         private static XElement GetDatasetConfig()
         {
-            return Provider.ConfigFileXml.Descendants(XmlElements.Dataset).First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id);
+            return Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
+                            .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Id);
         }
 
         public static void ResetAbortedChangelog()
@@ -136,11 +142,18 @@ namespace CORESubscriber
         {
             OrderedChangelogId = orderedChangelogId;
 
-            GetDatasetConfig().Descendants(XmlElements.AbortedChangelog).First().SetAttributeValue(XmlAttributes.ChangelogId, OrderedChangelogId);
+            GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog).SetAttributeValue(XmlAttributes.ChangelogId, OrderedChangelogId);
 
             Provider.Save();
+        }
 
+        public static string GetWfsClient()
+        {
+            var wfsClient = GetDatasetConfigFirstDescendant(XmlElements.WfsClient).Value;
 
+            if (wfsClient == "") throw new Exception($"No wfsClient given for dataset {Id}");
+
+            return wfsClient;
         }
 
         public static bool ChangelogIdIsDefault()
