@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Xml.Linq;
 using CORESubscriber.Xml;
 
@@ -11,20 +10,22 @@ namespace CORESubscriber.SoapAction
     {
         public static void Run()
         {
-            if (Dataset.OrderedChangelogId != "-1") return;
+            if (Dataset.OrderedChangelogId != Dataset.EmptyValue) return;
 
             var responseContent =
-                SoapRequest.Send(SoapActions.OrderChangelog, SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog)));
+                SoapRequest.Send(SoapActions.OrderChangelog,
+                    SetOrderVariables(SoapRequest.GetSoapContentByAction(SoapActions.OrderChangelog)));
 
             Dataset.OrderedChangelogId =
                 responseContent
-                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First().Value;
+                    .Descendants(Provider.GeosynchronizationNamespace + XmlAttributes.ChangelogId.LocalName).First()
+                    .Value;
 
             Provider.ConfigFileXml.Descendants(XmlElements.Dataset)
                     .First(d => d.Attribute(XmlAttributes.DatasetId)?.Value == Dataset.Id)
                     .Descendants(XmlElements.AbortedChangelog).First().Attribute(XmlAttributes.ChangelogId)
                     .Value =
-                Dataset.OrderedChangelogId.ToString();
+                Dataset.OrderedChangelogId;
 
             Provider.Save();
         }
