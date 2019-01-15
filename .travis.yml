@@ -10,9 +10,9 @@ script:
  - dotnet publish -c Release --self-contained -r ubuntu-x64
 before_deploy:
  - git tag "$(date +'%Y%m%d-%H%M%S')-$(git log --format=%h -1)"
- - cd build
- - tar -czvf ubuntu64.tar.gz  CORESubscriber/CORESubscriber/bin/Release/netcoreapp2.1/ubuntu-x64/publish/
- - tar -czvf win64.tar.gz CORESubscriber/CORESubscriber/bin/Release/netcoreapp2.1/win10-x64/publish/
+ - cd /home/travis/build/kartverket/CORESubscriber/CORESubscriber/bin/Release/netcoreapp2.1/
+ - tar -czvf ubuntu64.tar.gz ubuntu-x64/publish/
+ - tar -czvf win64.tar.gz win10-x64/publish/
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
