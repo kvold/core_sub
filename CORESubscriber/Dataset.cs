@@ -10,17 +10,19 @@ namespace CORESubscriber
 {
     internal class Dataset
     {
+        internal static string EmptyValue = "0";
+
         internal static readonly List<object> DefaultElements = new List<object>
         {
             new XAttribute(XmlAttributes.Namespace, ""),
 
-            new XAttribute(XmlAttributes.SubscriberLastIndex, -1),
+            new XAttribute(XmlAttributes.SubscriberLastIndex, EmptyValue),
 
             new XElement(XmlElements.AbortedChangelog,
                 new XAttribute(XmlAttributes.EndIndex, ""),
                 new XAttribute(XmlAttributes.Transaction, ""),
                 new XAttribute(XmlAttributes.ChangelogPath, ""),
-                new XAttribute(XmlAttributes.ChangelogId, -1)),
+                new XAttribute(XmlAttributes.ChangelogId, EmptyValue)),
 
             new XElement(XmlElements.WfsClient, ""),
 
@@ -34,8 +36,6 @@ namespace CORESubscriber
 
         internal static string Id { get; set; }
 
-        internal static string ChangelogIdDefaultValue = "-1";
-
         internal static string OrderedChangelogId { get; set; }
 
         internal static long ProviderLastIndex { get; set; }
@@ -46,7 +46,7 @@ namespace CORESubscriber
 
         internal static void UpdateSettings()
         {
-            OrderedChangelogId = ChangelogIdDefaultValue;
+            OrderedChangelogId = EmptyValue;
 
             SetSubscriberLastIndexToProviderLastIndex();
 
@@ -74,7 +74,7 @@ namespace CORESubscriber
 
             Version = GetVersion(subscribed);
 
-            return OrderedChangelogId == ChangelogIdDefaultValue;
+            return OrderedChangelogId == EmptyValue;
         }
 
         private static string GetVersion(XObject subscribed)
@@ -120,7 +120,7 @@ namespace CORESubscriber
         private static void SetAbortedchangelogToChangelogId()
         {
             GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
-                .SetAttributeValue(XmlAttributes.ChangelogId, ChangelogIdDefaultValue);
+                .SetAttributeValue(XmlAttributes.ChangelogId, EmptyValue);
 
             Provider.Save();
         }
@@ -166,7 +166,7 @@ namespace CORESubscriber
 
         public static bool ChangelogIdIsDefault()
         {
-            return OrderedChangelogId == ChangelogIdDefaultValue;
+            return OrderedChangelogId == EmptyValue;
         }
 
         public static void SetAbortedChangelog(string orderedChangelogId)

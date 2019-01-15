@@ -30,7 +30,7 @@ namespace CORESubscriber
                 ? ReadConfigFile()
                 : new XDocument(
                     new XComment(
-                        "Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is -1 to indicate first synchronization. Under normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."),
+                        $"Settings for Provider. Don't edit attributes unless you know what you're doing! SubscriberLastIndex is {Dataset.EmptyValue} to indicate first synchronization. Under normal circumstances only the text-value of the elements wfsClient and subscribed should be manually edited."),
                     CreateDefaultProvider());
 
             AddDatasetsToDocument(datasetsList, ConfigFileXml);
