@@ -8,18 +8,21 @@ script:
  - dotnet build
  - dotnet publish -c Release --self-contained -r win10-x64
  - dotnet publish -c Release --self-contained -r ubuntu-x64
+ - dotnet publish -c Release --self-contained -r centos-x64
 before_deploy:
  - git tag "$(date +'%Y%m%d-%H%M%S')-$(git log --format=%h -1)"
  - cd /home/travis/build/kartverket/CORESubscriber/CORESubscriber/bin/Release/netcoreapp2.1/
- - tar -czvf ubuntu64.tar.gz ubuntu-x64/publish/
- - tar -czvf win64.tar.gz win10-x64/publish/
+ - tar -czvf ubuntu-x64.tar.gz ubuntu-x64/publish/
+ - tar -czvf win10-x64.tar.gz win10-x64/publish/
+ - tar -czvf centos-x64.tar.gz centos-x64/publish/
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   file_glob: true
   file:
-   - ubuntu64.tar.gz 
-   - win64.tar.gz
+   - ubuntu-x64.tar.gz 
+   - win10-x64.tar.gz
+   - centos-x64.tar.gz
   skip_cleanup: true
   on:
     branch: master
