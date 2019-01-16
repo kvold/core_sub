@@ -18,21 +18,27 @@ See https://github.com/dotnet/docs/blob/master/docs/core/rid-catalog.md#using-ri
 #### Windows 10 64bit
 ```
 git clone https://github.com/kartverket/CORESubscriber.git
+
 cd CORESubscriber/CORESubscriber
+
 dotnet publish -c Release --self-contained -r win10-x64
 ```
 
 #### Ubuntu
 ```
 git clone https://github.com/kartverket/CORESubscriber.git
+
 cd CORESubscriber/CORESubscriber
+
 dotnet publish -c Release --self-contained -r ubuntu-x64
 ```
 
 #### Mac
 ```
 git clone https://github.com/kartverket/CORESubscriber.git
+
 cd CORESubscriber/CORESubscriber
+
 dotnet publish -c Release --self-contained -r osx-x64
 ```
 
