@@ -30,7 +30,7 @@ Coresubscriber.exe add ${providerurl} ${username} ${password} ${providerSettings
 
 #### Docker
 ```
-docker run -v ${PWD}:/data geosynchronization/coresubscriber dotnet  CORESubscriber.dll add ${providerurl} ${username} ${password} ${providerSettings}.xml
+docker run -v ${PWD}:/data geosynchronization/coresubscriber dotnet CORESubscriber.dll add ${providerurl} ${username} ${password} ${providerSettings}.xml
 ```
 
 ### Editing providerSettings
@@ -51,7 +51,7 @@ Coresubscriber.exe sync ${providerSettings}.xml ${tempFolder}
 
 #### Docker
 ```
-docker run -v ${PWD}:/data geosynchronization/coresubscriber dotnet CORESubscriber.dll sync ${providerSettings}.xml ${tempFolder}
+docker run -v ${PWD}:/data geosynchronization/coresubscriber dotnet CORESubscriber.dll sync /data/${providerSettings}.xml ${tempFolder}
 ```
 
 
