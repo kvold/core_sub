@@ -122,7 +122,9 @@ namespace CORESubscriber
 
             Changelog.Run();
 
-            Dataset.UpdateSettings();
+            Dataset.ProviderLastIndex = Dataset.GetProviderLastIndex();
+
+            Dataset.SaveFinalSettings();
 
             return Dataset.GetDatasetIdFromElement(subscribed);
         }
@@ -144,14 +146,19 @@ namespace CORESubscriber
             {
                 Dataset.OrderedChangelogId = abortedChangelogId;
 
-                GetChangelogStatus.Run();
-
-                Changelog.Get(SoapAction.GetChangelog.Run()).Wait();
+                WaitForChangelogAndDownload();
 
                 return;
             }
 
             Changelog.DataFolder = changelogPath;
+        }
+
+        private static void WaitForChangelogAndDownload()
+        {
+            GetChangelogStatus.Run();
+
+            Changelog.Get(SoapAction.GetChangelog.Run()).Wait();
         }
 
         private static void WriteDatasetInformation()
@@ -166,9 +173,7 @@ namespace CORESubscriber
 
             else OrderChangelog2.Run();
 
-            GetChangelogStatus.Run();
-
-            Changelog.Get(SoapAction.GetChangelog.Run()).Wait();
+            WaitForChangelogAndDownload();
         }
 
         private static Stopwatch StartTimer()

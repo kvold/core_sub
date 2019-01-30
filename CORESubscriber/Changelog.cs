@@ -53,8 +53,6 @@ namespace CORESubscriber
             directoryInfo.GetDirectories().ToList().ForEach(ReadFiles);
 
             ReadFiles(directoryInfo);
-
-            Dataset.ResetAbortedChangelog();
         }
 
         private static void ReadFiles(DirectoryInfo directoryInfo)

@@ -44,15 +44,15 @@ namespace CORESubscriber
 
         public static string Version { get; set; }
 
-        internal static void UpdateSettings()
+        internal static void SaveFinalSettings()
         {
-            OrderedChangelogId = EmptyValue;
+            ResetAbortedChangelog();
+
+            SetOrderedChangelogId(EmptyValue);
 
             SetSubscriberLastIndexToProviderLastIndex();
 
-            SetAbortedchangelogToChangelogId();
-
-            Provider.Save();
+            ResetAbortedchangelogId();
         }
 
         private static void SetSubscriberLastIndexToProviderLastIndex()
@@ -98,6 +98,15 @@ namespace CORESubscriber
                 .Value;
         }
 
+        public static long GetProviderLastIndex()
+        {
+            var endIndex = GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
+                .Attribute(XmlAttributes.EndIndex)
+                .Value;
+
+            return string.IsNullOrEmpty(endIndex) ? Convert.ToInt64(EmptyValue) : Convert.ToInt64(endIndex);
+        }
+
         public static void SetChangelogPath(string dataFolder)
         {
             GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
@@ -138,7 +147,7 @@ namespace CORESubscriber
                 .Attribute(XmlAttributes.Transaction).Value);
         }
 
-        private static void SetAbortedchangelogToChangelogId()
+        private static void ResetAbortedchangelogId()
         {
             GetDatasetConfigFirstDescendant(XmlElements.AbortedChangelog)
                 .SetAttributeValue(XmlAttributes.ChangelogId, EmptyValue);
