@@ -105,7 +105,7 @@ namespace CORESubscriber
 
             var xTransaction = new XDocument(transaction);
 
-            File.WriteAllText($"{Config.DownloadFolder}\\lastTransaction.xml", xTransaction.ToString());
+            File.WriteAllText($"{Config.DownloadFolder}/lastTransaction.xml", xTransaction.ToString());
 
             return xTransaction;
         }
@@ -168,7 +168,7 @@ namespace CORESubscriber
 
         private static HttpResponseMessage GetResult(string downloadUrl)
         {
-            using (var client = SetCredentials(new HttpClient())) return client.GetAsync(downloadUrl).Result;
+            using (var client = SetCredentials(new HttpClient())) return client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead).Result;
         }
 
         private static HttpClient SetCredentials(HttpClient client)
