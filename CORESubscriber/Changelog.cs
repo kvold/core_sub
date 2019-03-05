@@ -64,7 +64,12 @@ namespace CORESubscriber
 
         private static XDocument GetChangelogXml(FileInfo fileInfo)
         {
-            return XDocument.Parse(fileInfo.OpenText().ReadToEnd());
+            string xmlContent;
+            using(StreamReader reader = fileInfo.OpenText())
+            {
+                xmlContent = reader.ReadToEnd();
+            }
+            return XDocument.Parse(xmlContent);
         }
 
         private static string GetEndIndex(XContainer changeLogXml)
