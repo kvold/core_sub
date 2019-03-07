@@ -118,7 +118,9 @@ namespace CORESubscriber
 
             var xTransaction = new XDocument(transaction);
 
-            File.WriteAllText($"{Config.DownloadFolder}/lastTransaction.xml", xTransaction.ToString());
+            // XmlWriter writer = new XmlWriter($"{Config.DownloadFolder}/lastTransaction.xml");
+            // File.WriteAllText($"{Config.DownloadFolder}/lastTransaction.xml", xTransaction.ToString());
+            xTransaction.Save($"{Config.DownloadFolder}/lastTransaction.xml");
 
             return xTransaction;
         }
