@@ -62,10 +62,11 @@ namespace CORESubscriber
                 directory.GetFiles().ToList().ForEach(DoTransactions));
         }
 
-        private static XDocument GetChangelogXml(FileInfo fileInfo)
+        private static XDocument GetChangelogXml(string xmlFilePath)
         {
+            Console.WriteLine(xmlFilePath);
             string xmlContent;
-            using(StreamReader reader = fileInfo.OpenText())
+            using(var reader = new StreamReader(xmlFilePath))
             {
                 xmlContent = reader.ReadToEnd();
             }
@@ -79,7 +80,8 @@ namespace CORESubscriber
 
         private static void DoTransactions(FileInfo fileInfo)
         {
-            var changelogXml = GetChangelogXml(fileInfo);
+            var xmlFilePath = fileInfo.FullName;
+            var changelogXml = GetChangelogXml(xmlFilePath);
 
             Dataset.SetEndindex(GetEndIndex(changelogXml));
 
