@@ -120,19 +120,22 @@ namespace CORESubscriber
 
             // XmlWriter writer = new XmlWriter($"{Config.DownloadFolder}/lastTransaction.xml");
             // File.WriteAllText($"{Config.DownloadFolder}/lastTransaction.xml", xTransaction.ToString());
+            System.IO.File.Delete($"{Config.DownloadFolder}/lastTransaction.xml");
             xTransaction.Save($"{Config.DownloadFolder}/lastTransaction.xml");
 
             return xTransaction;
         }
 
-        private static void Send(XNode transactionDocument)
+        private static void Send(XDocument transactionDocument)
         {
             using (var client = new HttpClient())
             {
-                var request = new HttpRequestMessage(HttpMethod.Post, Dataset.GetWfsClient())
-                {
-                    Content = GetHttpContent(transactionDocument)
-                };
+                var request = new HttpRequestMessage(HttpMethod.Post, Dataset.GetWfsClient());
+                Stream stream = new MemoryStream();
+                transactionDocument.Save(stream);
+                stream.Position = 0;
+                request.Content = new StreamContent(stream);
+                
 
                 var response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).Result;
 
