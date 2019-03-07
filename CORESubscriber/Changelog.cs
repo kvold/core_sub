@@ -130,6 +130,7 @@ namespace CORESubscriber
         {
             using (var client = new HttpClient())
             {
+                client.Timeout = TimeSpan.FromMinutes(5);
                 var request = new HttpRequestMessage(HttpMethod.Post, Dataset.GetWfsClient());
                 Stream stream = new MemoryStream();
                 transactionDocument.Save(stream);
