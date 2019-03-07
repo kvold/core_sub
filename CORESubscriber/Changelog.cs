@@ -64,13 +64,14 @@ namespace CORESubscriber
 
         private static XDocument GetChangelogXml(string xmlFilePath)
         {
-            Console.WriteLine(xmlFilePath);
-            string xmlContent;
-            using(var reader = new StreamReader(xmlFilePath))
-            {
-                xmlContent = reader.ReadToEnd();
-            }
-            return XDocument.Parse(xmlContent);
+            // Console.WriteLine(xmlFilePath);
+            // string xmlContent;
+            // using(var reader = new StreamReader(xmlFilePath))
+            // {
+            //     xmlContent = reader.ReadToEnd();
+            // }
+            // XmlReader.Create(xmlFilePath)
+            return XDocument.Load(xmlFilePath);
         }
 
         private static string GetEndIndex(XContainer changeLogXml)
